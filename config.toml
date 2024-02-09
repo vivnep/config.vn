@@ -1,0 +1,28 @@
+theme = "onedark"
+# theme = "tokyonight_storm"
+# theme = "github_dark_dimmed"
+# theme = "hex_steel"
+
+[editor]
+line-number = "relative"
+bufferline = "multiple"
+# mouse = false # am i strong enough...
+
+[editor.lsp]
+display-messages = true
+# display-inlay-hints = true
+
+[keys.normal]
+esc = ["collapse_selection", "keep_primary_selection"]
+
+[editor.cursor-shape]
+insert = "bar"
+
+[editor.whitespace.render]
+nbsp = "all"
+
+[editor.statusline]
+right = ["diagnostics", "version-control", "selections", "file-encoding", "file-type"]
+
+[editor.soft-wrap]
+enable = true
