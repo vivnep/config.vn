@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-# cd ~ && git clone https://github.com/vivnep/config.vn && ./config.vn/setup.sh
-
+# cd ~ && git clone https://github.com/vivnep/config.vn && ./config.vn/init.sh
 set -e
 
 OS="$(uname)"

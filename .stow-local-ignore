@@ -23,4 +23,4 @@ _darcs
 ^/COPYING
 
 \.DS_Store
-\A/setup\.sh\z
+\A/init\.sh\z
