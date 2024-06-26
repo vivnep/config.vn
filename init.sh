@@ -61,11 +61,23 @@ install_pkg() {
 }
 
 # install packages
-for pkg in stow tmux nvim alacritty; do
+for pkg in stow tmux nvim alacritty zsh; do
     install_pkg "$pkg"
 done
 
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${CONFIG_DIR}"
 echo "stowing configs"
-stow .
+stow --dotfiles .
+
+if ! grep -q "$(which zsh)" /etc/shells; then
+    echo "Adding zsh to /etc/shells..."
+    sudo sh -c "echo $(which zsh) >> /etc/shells"
+    echo "zsh added to /etc/shells."
+else
+    echo "zsh is already in /etc/shells."
+fi
+chsh -s "$(which zsh)"
+
+echo "config setup complete!"
+echo "log out and log back in to activate the new login shell"
