@@ -1,0 +1,34 @@
+#completions
+autoload -Uz compinit
+compinit -C
+zstyle ':completion:*' menu yes select
+
+if [[ "${terminfo[kcbt]}" != "" ]]; then
+  bindkey "${terminfo[kcbt]}" reverse-menu-complete   # [Shift-Tab] - move through the completion menu backwards
+fi
+
+# prompt
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+
+eval "$(zoxide init zsh)"
+
+# launch daily notes with `notes`
+# launch specific notes with `notes woodworking`
+# this is a cloud synced file, so it's live on all my devices
+function notes(){
+  SUBJECT="${1:=daily}"
+  if [ -z "$SUBJECT" ]
+  then
+    (cd ~/Documents/notes && hx NOTES.md)
+  else
+    (cd ~/Documents/notes && hx "${SUBJECT:u}.md" NOTES.md)
+  fi
+}
+
+function vtmuxconf() {
+  nvim ~/.config/tmux/tmux.conf
+  tmux source-file ~/.config/tmux/tmux.conf
+}
+
