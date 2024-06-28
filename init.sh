@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# cd ~ && git clone https://github.com/vivnep/config.vn && ./config.vn/init.sh
+# cd ~
+# git clone https://github.com/vivnep/config.vn
+# git submodule update --init --recursive
+# ./config.vn/init.sh
 set -e
 
 OS="$(uname)"
 
 case "$OS" in
 "Darwin")
-    INSTALL_CMD="brew install"
-    CHECK_INSTALL_CMD="brew list"
-    PKG_INFO=(
-        ["alacritty"]="--cask alacritty"
-        ["nvim"]="neovim"
-    )
+    brew update
+    brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make
     ;;
 "Linux")
     if [ -f /etc/debian_version ]; then
@@ -31,39 +30,6 @@ case "$OS" in
     exit 1
     ;;
 esac
-
-package_installed() {
-    local pkg="$1"
-    local check_pkg="${PKG_INFO[$pkg]:-$pkg}"
-    check_pkg="${check_pkg##* }" # Get the last word (package name)
-    case "$OS" in
-    "Darwin")
-        $CHECK_INSTALL_CMD "$check_pkg" &>/dev/null
-        ;;
-    "Linux")
-        $CHECK_INSTALL_CMD "$check_pkg" &>/dev/null
-        ;;
-    esac
-}
-
-install_pkg() {
-    local pkg="$1"
-    if package_installed "$pkg"; then
-        echo "$pkg is already installed."
-    else
-        echo "$pkg is not installed. Installing..."
-        if [ -n "${PKG_INFO[$pkg]}" ]; then
-            eval "${PKG_INFO[$pkg]}"
-        else
-            eval "$INSTALL_CMD $pkg"
-        fi
-    fi
-}
-
-# install packages
-for pkg in stow tmux fzf nvim alacritty zsh zoxide ripgrep git make; do
-    install_pkg "$pkg"
-done
 
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${CONFIG_DIR}"
