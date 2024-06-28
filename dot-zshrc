@@ -30,9 +30,10 @@ function notes(){
 # home tmux session
  function mux() {
     if ! tmux ls | grep -q '^VN:'; then
-        tmux new -s "VN" -c "$HOME" -d 
+        tmux new -s "VN" -c "$HOME"
+    else
+      tmux new -t "VN"
     fi
-    tmux attach -t "VN"
 }
 
 fancy-ctrl-z() {
