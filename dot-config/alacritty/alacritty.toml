@@ -1,0 +1,31 @@
+[colors.primary]
+background = "#181818"
+
+[colors.selection]
+background = "#ffffff"
+text = "#ffffff"
+
+[env]
+TERM = "alacritty"
+
+[window]
+option_as_alt = "Both"
+
+[font]
+size = 11
+normal      = { family = "Berkeley Mono", style = "Regular" }
+bold        = { family = "Berkeley Mono", style = "Bold" }
+italic      = { family = "Berkeley Mono", style = "Italic" }
+bold_italic = { family = "Berkeley Mono", style = "Bold Italic" }
+
+[selection]
+save_to_clipboard = true
+
+[keyboard]
+bindings = [
+	{ action = "None", key = "W", mods = "Command" },
+	{ action = "ToggleFullscreen", key = "Return", mods = "Command" },
+	{ action = "CreateNewWindow", key = "N", mods = "Command" }
+]
+
+
