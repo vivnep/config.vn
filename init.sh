@@ -61,7 +61,7 @@ install_pkg() {
 }
 
 # install packages
-for pkg in stow tmux fzf nvim alacritty zsh zoxide; do
+for pkg in stow tmux fzf nvim alacritty zsh zoxide ripgrep git make; do
     install_pkg "$pkg"
 done
 
