@@ -27,12 +27,8 @@ function notes(){
   fi
 }
 
-function vtmuxconf() {
-  nvim ~/.config/tmux/tmux.conf
-  tmux source-file ~/.config/tmux/tmux.conf
-}
-
- function vn_session() {
+# home tmux session
+ function mux() {
     if ! tmux ls | grep -q '^VN:'; then
         tmux new -s "VN" -c "$HOME" -d 
     fi
