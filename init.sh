@@ -77,7 +77,9 @@ if ! grep -q "$(which zsh)" /etc/shells; then
 else
     echo "zsh is already in /etc/shells."
 fi
-chsh -s "$(which zsh)"
+if [[ "$SHELL" =~ "zsh" ]]; then
+    chsh -s "$(which zsh)"
+    echo "log out and log back in to activate the new login shell"
+fi
 
 echo "config setup complete!"
-echo "log out and log back in to activate the new login shell"
