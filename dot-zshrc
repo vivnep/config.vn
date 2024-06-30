@@ -1,9 +1,6 @@
 source ~/.zsh/antidote/antidote.zsh
 antidote load
 
-#completions
-autoload -Uz compinit
-compinit -C
 zstyle ':completion:*' menu yes select # menu style completions
 if [[ "${terminfo[kcbt]}" != "" ]]; then
   bindkey "${terminfo[kcbt]}" reverse-menu-complete   # [Shift-Tab] - move through the completion menu backwards
