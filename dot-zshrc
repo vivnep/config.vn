@@ -1,14 +1,15 @@
+source ~/.zsh/antidote/antidote.zsh
+antidote load
+
 #completions
 autoload -Uz compinit
 compinit -C
-zstyle ':completion:*' menu yes select
-
+zstyle ':completion:*' menu yes select # menu style completions
 if [[ "${terminfo[kcbt]}" != "" ]]; then
   bindkey "${terminfo[kcbt]}" reverse-menu-complete   # [Shift-Tab] - move through the completion menu backwards
 fi
 
 # prompt
-fpath+=($HOME/.zsh/pure)
 autoload -U promptinit; promptinit
 prompt pure
 
@@ -35,15 +36,3 @@ function notes(){
       tmux new -t "VN"
     fi
 }
-
-fancy-ctrl-z() {
-    if [[ $#BUFFER -eq 0 ]]; then
-        BUFFER="fg"
-        zle accept-line
-    else
-        zle push-input
-        zle clear-screen
-    fi
-}
-zle -N fancy-ctrl-z
-bindkey '^Z' fancy-ctrl-z

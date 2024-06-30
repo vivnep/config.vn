@@ -1,0 +1,5 @@
+zsh-users/zsh-completions
+
+mdumitru/fancy-ctrl-z
+
+sindresorhus/pure kind:fpath
