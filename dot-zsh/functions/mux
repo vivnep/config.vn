@@ -1,0 +1,6 @@
+# home tmux session
+if ! tmux ls | grep -q '^VN:'; then
+        tmux new -s "VN" -c "$HOME"
+    else
+      tmux new -t "VN"
+fi

@@ -1,0 +1,9 @@
+# launch daily notes with `notes`
+# launch specific notes with `notes woodworking`
+SUBJECT="${1:=daily}"
+  if [ -z "$SUBJECT" ]
+  then
+    (cd ~/Documents/notes && nvim NOTES.md)
+  else
+    (cd ~/Documents/notes && nvim "${SUBJECT:u}.md" NOTES.md)
+  fi
