@@ -7,6 +7,18 @@ if [[ "${terminfo[kcbt]}" != "" ]]; then
 fi
 eval "$(zoxide init zsh)" # better cd
 
+fancy-ctrl-z () {
+  if [[ $#BUFFER -eq 0 ]]; then
+    BUFFER="fg"
+    zle accept-line -w
+  else
+    zle push-input -w
+    zle clear-screen -w
+  fi
+}
+zle -N fancy-ctrl-z
+bindkey '^Z' fancy-ctrl-z
+
 # prompt
 autoload -U promptinit; promptinit
 prompt pure
