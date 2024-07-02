@@ -10,7 +10,7 @@ OS="$(uname)"
 case "$OS" in
 "Darwin")
     brew update
-    brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make
+    brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek
     ;;
 "Linux")
     if [ -f /etc/debian_version ]; then
