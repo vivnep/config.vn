@@ -1,2 +1,3 @@
 . "$HOME/.cargo/env"
 ZFUNCDIR="$HOME/.zsh/functions"
+EDITOR=nvim
