@@ -11,7 +11,7 @@ case "$OS" in
     brew update
     brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek
     brew install emacs-plus@29 --with-native-comp
-    if [ -z "$(ls -A "${HOME}/gdb" &>/dev/null)" ]; then
+    if [ -z "$(ls -A "${HOME}/gdb" &2>/dev/null)" ]; then
         cd ~
         mkdir -p gdb
         wget https://github.com/vivnep/config.vn/releases/download/v0.1/gdb-m1.tar.gz
