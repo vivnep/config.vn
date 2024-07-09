@@ -1,3 +1,4 @@
 . "$HOME/.cargo/env"
-ZFUNCDIR="$HOME/.zsh/functions"
-EDITOR=nvim
+DOT_ZSH="$HOME/.zsh"
+ZFUNCDIR="$DOT_ZSH/functions"
+EDITOR=nvim # might change to emacsclient

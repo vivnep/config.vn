@@ -22,3 +22,8 @@ bindkey '^Z' fancy-ctrl-z
 # prompt
 autoload -U promptinit; promptinit
 prompt pure
+
+# load envvars per os
+if [[ $(uname) == "Darwin" ]]; then
+    source "$DOT_ZSH"/os/mac.zsh
+fi
