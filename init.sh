@@ -11,7 +11,10 @@ case "$OS" in
     brew update
     brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek
     brew install emacs-plus@29 --with-native-comp
-    if [ -z "$(ls -A "${HOME}/gdb" &2>/dev/null)" ]; then
+    ln -s /opt/homebrew/opt/emacs-plus@29/Emacs.app /Applications
+    if [ -z "$(
+        ls -A "${HOME}/gdb" 2>/dev/null
+    )" ]; then
         cd ~
         mkdir -p gdb
         wget https://github.com/vivnep/config.vn/releases/download/v0.1/gdb-m1.tar.gz
@@ -37,7 +40,6 @@ case "$OS" in
     exit 1
     ;;
 esac
-
 
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${CONFIG_DIR}"
