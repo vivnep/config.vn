@@ -1,3 +1,4 @@
+;;; TODO organize init.el - make it literate?
 ;;; TODO fix scrolling
 ;;; straight + vertico + consult + embark + marginalia + corfu + meow
 ;; copy from https://robbmann.io/emacsd/
@@ -159,6 +160,7 @@ If the new path's directories does not exist, create them."
     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;;; packages
+;;; TODO add yasnippet for eglot?
 ;; automatically use treesitter
 (use-package treesit-auto
   :ensure t
