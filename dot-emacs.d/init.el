@@ -111,6 +111,8 @@ If the new path's directories does not exist, create them."
 ;; theme
 (use-package modus-themes
   :ensure t)
+(use-package gruvbox-theme
+  :ensure t)
 (use-package circadian
   :ensure t
   :config
