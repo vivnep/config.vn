@@ -1,3 +1,4 @@
+;;; TODO fix scrolling
 ;;; straight + vertico + consult + embark + marginalia + corfu + meow
 ;; copy from https://robbmann.io/emacsd/
 ;;; melpa
@@ -167,6 +168,7 @@ If the new path's directories does not exist, create them."
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 ;; org mode
+;;; TODO pretty org headings and stuff
 (use-package org)
 ;; persist history
 (use-package savehist
