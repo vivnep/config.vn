@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 # cd ~
 # git clone https://github.com/vivnep/config.vn
-# git submodule update --init --recursive
 # ./config.vn/init.sh
 set -e
-
 OS="$(uname)"
 
 case "$OS" in
@@ -39,6 +37,8 @@ case "$OS" in
     exit 1
     ;;
 esac
+
+git submodule update --init --recursive
 
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${CONFIG_DIR}"
