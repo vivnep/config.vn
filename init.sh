@@ -8,9 +8,11 @@ set -e
 OS="$(uname)"
 
 case "$OS" in
-"Darwin")
+    "Darwin")
+    brew tap d12frosted/emacs-plus
     brew update
     brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek
+    brew install emacs-plus@29
     ;;
 "Linux")
     if [ -f /etc/debian_version ]; then
