@@ -5,7 +5,7 @@
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq inhibit-startup-echo-area-message (user-login-name))
 ;; Default frame configuration: full screen, good-looking title bar on macOS
-(tool-bar-mode -1)
+(tool-bar-mode -1) ;; needs to be here so fullscreen is set right
 (setq frame-resize-pixelwise t)
 (setq default-frame-alist '((fullscreen . maximized)
                             (vertical-scroll-bars . nil)
