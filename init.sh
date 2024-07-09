@@ -38,10 +38,10 @@ case "$OS" in
     ;;
 esac
 
-git submodule update --init --recursive
 
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${CONFIG_DIR}"
+git submodule update --init --recursive
 echo "stowing configs"
 stow --dotfiles .
 
