@@ -2,6 +2,7 @@
 ;;; TODO fix scrolling
 ;;; straight + vertico + consult + embark + marginalia + corfu + meow
 ;; ref https://robbmann.io/emacsd/
+;; ref https://codeberg.org/ashton314/emacs-bedrock
 ;;; melpa
 (with-eval-after-load 'package
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
@@ -116,13 +117,16 @@ If the new path's directories does not exist, create them."
   :ensure t)
 (use-package gruvbox-theme
   :ensure t)
-;;; TODO make vn-light-theme, vn-dark-theme vars
+(defvar vn-light-theme 'modus-operandi-tinted
+  "The light theme to use.")
+(defvar vn-dark-theme 'gruvbox
+  "The dark theme to use.")
 (defun my/apply-theme (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (load-theme 'modus-operandi-tinted t))
-    ('dark (load-theme 'gruvbox t))))
+    ('light (load-theme vn-light-theme t))
+    ('dark (load-theme vn-dark-theme t))))
 (if (eq system-type 'darwin)
     (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
   (
@@ -131,10 +135,9 @@ If the new path's directories does not exist, create them."
      :config
      (setq calendar-latitude 37.0)
      (setq calendar-longitude -122.0)
-     (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-                              (:sunset  . gruvbox)))
+     (setq circadian-themes `((:sunrise . ,vn-light-theme)
+                              (:sunset  . ,vn-dark-theme)))
      (circadian-setup))
-
    )
   )
 
