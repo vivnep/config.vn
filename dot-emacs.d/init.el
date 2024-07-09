@@ -115,14 +115,28 @@ If the new path's directories does not exist, create them."
   :ensure t)
 (use-package gruvbox-theme
   :ensure t)
-(use-package circadian
-  :ensure t
-  :config
-  (setq calendar-latitude 37.0)
-  (setq calendar-longitude -122.0)
-  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-                           (:sunset  . gruvbox)))
-  (circadian-setup))
+;;; TODO make vn-light-theme, vn-dark-theme vars
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (load-theme 'modus-operandi-tinted t))
+    ('dark (load-theme 'gruvbox t))))
+(if (eq system-type 'darwin)
+    (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+  (
+   (use-package circadian
+     :ensure t
+     :config
+     (setq calendar-latitude 37.0)
+     (setq calendar-longitude -122.0)
+     (setq circadian-themes '((:sunrise . modus-operandi-tinted)
+                              (:sunset  . gruvbox)))
+     (circadian-setup))
+
+   )
+  )
+
 
 
 ;; move between windows with S-<arrow>
