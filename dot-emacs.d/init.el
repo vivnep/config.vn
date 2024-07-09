@@ -1,7 +1,7 @@
 ;;; TODO organize init.el - make it literate?
 ;;; TODO fix scrolling
 ;;; straight + vertico + consult + embark + marginalia + corfu + meow
-;; copy from https://robbmann.io/emacsd/
+;; ref https://robbmann.io/emacsd/
 ;;; melpa
 (with-eval-after-load 'package
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
@@ -136,8 +136,6 @@ If the new path's directories does not exist, create them."
 
    )
   )
-
-
 
 ;; move between windows with S-<arrow>
 (windmove-default-keybindings 'shift)
@@ -540,19 +538,3 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("98ef36d4487bf5e816f89b1b1240d45755ec382c7029302f36ca6626faf44bbd" "d445c7b530713eac282ecdeea07a8fa59692c83045bf84dd112dd738c7bcad1d" "7b8f5bbdc7c316ee62f271acf6bcd0e0b8a272fdffe908f8c920b0ba34871d98" "64045b3416d83e5eac0718e236b445b2b3af02ff5bcd228e9178088352344a92" "703a3469ae4d2a83fd5648cac0058d57ca215d0fea7541fb852205e4fae94983" "1ea82e39d89b526e2266786886d1f0d3a3fa36c87480fad59d8fab3b03ef576e" "7613ef56a3aebbec29618a689e47876a72023bbd1b8393efc51c38f5ed3f33d1" "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850" "c7a926ad0e1ca4272c90fce2e1ffa7760494083356f6bb6d72481b879afce1f2" "fee7287586b17efbfda432f05539b58e86e059e78006ce9237b8732fde991b4c" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" default))
- '(package-selected-packages
-   '(nov solarized-theme solarized-emacs use-package meow anti-zenburn-theme)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
