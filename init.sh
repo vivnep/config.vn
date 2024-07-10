@@ -11,7 +11,7 @@ case "$OS" in
     brew update
     brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek
     brew install emacs-plus@29 --with-native-comp
-    ln -s /opt/homebrew/opt/emacs-plus@29/Emacs.app /Applications
+    ln -sf /opt/homebrew/opt/emacs-plus@29/Emacs.app /Applications
     if [ -z "$(
         ls -A "${HOME}/gdb" 2>/dev/null
     )" ]; then
