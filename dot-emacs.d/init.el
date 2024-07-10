@@ -567,7 +567,7 @@ If the new path's directories does not exist, create them."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref cape which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
+   '(bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
