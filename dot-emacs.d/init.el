@@ -8,6 +8,9 @@
   ;; get updates to builtin packages
   (setq package-install-upgrade-built-in t)
 
+  ;; track recently opened files
+  (recentf-mode t)
+  
   ;; vertico helper
   (defun crm-indicator (args)
     "Prompt indicator for `completing-read-multiple'.
@@ -72,6 +75,15 @@ If the new path's directories does not exist, create them."
 	scroll-conservatively 101
 	scroll-preserve-screen-position t
 	)
+
+  ;; auto-matching parens
+  (electric-pair-mode t)
+
+  ;; don't use tab characters for indents
+  (setq-default indent-tabs-mode nil)
+
+  ;; save place in files
+  (save-place-mode t)
   
   ;; hide tab bar until there's more than one tab
   (setq tab-bar-show 1)  
@@ -150,6 +162,8 @@ If the new path's directories does not exist, create them."
   :config
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
+  (unless package-archive-contents
+  (package-refresh-contents))
   )
 
 ;; automatically use treesitter
@@ -239,7 +253,6 @@ If the new path's directories does not exist, create them."
               )
 	    ))
 (use-package corfu-terminal
-  :ensure t
   :config
   (unless (display-graphic-p)
     (corfu-terminal-mode +1))
@@ -247,7 +260,6 @@ If the new path's directories does not exist, create them."
 
 ;; templates
 (use-package tempel
-  :ensure t
   :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
          ("M-*" . tempel-insert))
   :init
@@ -273,8 +285,7 @@ If the new path's directories does not exist, create them."
   ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
   ;; (global-tempel-abbrev-mode)
 )
-(use-package tempel-collection
-  :ensure t)
+(use-package tempel-collection)
 
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
@@ -604,18 +615,3 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("e410458d3e769c33e0865971deb6e8422457fad02bf51f7862fa180ccc42c032" "8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91" "871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" default))
- '(package-selected-packages
-   '(tempel-collection tempel bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
