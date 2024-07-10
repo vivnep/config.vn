@@ -251,7 +251,7 @@ If the new path's directories does not exist, create them."
   :config
   (setq dashboard-banner-logo-title "Emacs")
   (setq dashboard-startup-banner 'logo)
-  (setq dashboard-vertically-center-content t)
+  (setq dashboard-vertically-center-content t) ;FIXME doesn't center on startup https://github.com/emacs-dashboard/emacs-dashboard/issues/534
   (setq dashboard-center-content t)
   (setq dashboard-items '((projects  . 5)
                           (agenda    . 5)
@@ -377,6 +377,15 @@ If the new path's directories does not exist, create them."
 ;;   ;;(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
 ;;   ;;(add-hook 'completion-at-point-functions #'cape-line)
 ;; )
+
+;; better help buffer
+(use-package helpful
+  :ensure t
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h x" . helpful-command)
+   ("C-c C-d" . helpful-at-point)))
 
 ;; eshell
 (use-package eshell
@@ -667,3 +676,16 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(helpful which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection solarized-theme soap-client org orderless nov modus-themes meow marginalia magit idlwave gruvbox-theme faceup erc embark-consult eglot dashboard corfu-terminal circadian cape avy anti-zenburn-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
