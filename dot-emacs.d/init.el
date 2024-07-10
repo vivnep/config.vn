@@ -233,6 +233,31 @@ If the new path's directories does not exist, create them."
   :init
   (savehist-mode))
 
+;; startup dashboard
+(use-package fortune
+  :config
+  (defun get-multiple-fortunes (count)
+    (let (fortunes)
+      (dotimes (_ count)
+        (setq fortunes (cons (fortune-message) fortunes)))
+      fortunes)
+    )
+  (if (eq system-type 'darwin)
+      (progn
+        (setq fortune-dir "/opt/homebrew/Cellar/fortune/9708/share/games/fortunes"
+              fortune-file "/opt/homebrew/Cellar/fortune/9708/share/games/fortunes/fortunes"))))
+(use-package dashboard
+  :ensure t
+  :config
+  (setq dashboard-banner-logo-title "Emacs")
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-vertically-center-content t)
+  (setq dashboard-center-content t)
+  (setq dashboard-items '((projects  . 5)
+                          (agenda    . 5)
+                          ))
+  (setq dashboard-footer-messages (get-multiple-fortunes 7))
+  (dashboard-setup-startup-hook))
 
 ;; minibuffer completion framework
 (use-package vertico  
