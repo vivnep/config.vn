@@ -21,27 +21,22 @@
                   (car args))
           (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  (setq vc-follow-symlinks nil)
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (setq enable-recursive-minibuffers t) ; minibuffs in minibuffs
 
-  ;; Support opening new minibuffers from inside existing minibuffers.
-  (setq enable-recursive-minibuffers t)
 
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
   (setq tab-always-indent 'complete)
 
-  ;; Emacs 28 and newer: Hide commands in M-x which do not work in the current
-  ;; mode.  Vertico commands are hidden in normal buffers. This setting is
-  ;; useful beyond Vertico.
+  ;; omits unapplicable commands from other modes
   (setq read-extended-command-predicate #'command-completion-default-include-p)
 
-  ;;; boilerplate copied from bedrock
   ;; automatically reread from disk if the underlying file changes
+  ;; uses fs events - os dependent
   (setq auto-revert-avoid-polling t)
   (setq auto-revert-interval 5)
   (setq auto-revert-check-vc-info t)
@@ -58,21 +53,32 @@ If the new path's directories does not exist, create them."
       backupFilePath))
   (setq make-backup-file-name-function 'bedrock--backup-file-name)
 
+  (setq vc-follow-symlinks t)                      ; no annoying symlink warning
   (setq inhibit-splash-screen t)                   ; no splash screen
   (setq line-number-mode t)                        ; Show current line in modeline
   (setq column-number-mode t)                      ; Show column as well
   (setq x-underline-at-descent-line nil)           ; Prettier underlines
   (setq switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
   (blink-cursor-mode -1)                           ; steady cursor
+  (global-visual-line-mode)                        ; line wrap at word boundaries
   (pixel-scroll-precision-mode)                    ; smooth scrolling
-  (tab-bar-mode)
-  (tab-bar-history-mode)
-  (global-set-key (kbd "M-[") 'tab-bar-history-back)
-  (global-set-key (kbd "M-]") 'tab-bar-history-forward)
-  (global-visual-line-mode) ; line wrap at word boundaries
   ;; Display line numbers in programming mode
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (setq display-line-numbers-width 3)           ; Set a minimum width
+  (setq display-line-numbers-width-start 1)        ; avoids horizontal jitter
+
+  ;; alternate between window layouts in a single frame
+  (tab-bar-mode)
+  ;; move through layout history
+  (tab-bar-history-mode) 
+  (global-set-key (kbd "M-[") 'tab-bar-history-back)
+  (global-set-key (kbd "M-]") 'tab-bar-history-forward)
+
+  ;; move between windows with S-<arrow>
+  (windmove-default-keybindings 'shift)
+  ;; alternate window with M-o
+  (global-set-key (kbd "M-o") 'other-window)
+  ;; use ibuffer for C-x C-b
+  (global-set-key [remap list-buffers] 'ibuffer)
   )
 
 ;;; convenience functions
@@ -125,15 +131,6 @@ If the new path's directories does not exist, create them."
    )
   )
 
-;; move between windows with S-<arrow>
-(windmove-default-keybindings 'shift)
-;; alternate window with M-o
-(global-set-key (kbd "M-o") 'other-window)
-
-;; use ibuffer for C-x C-b
-(global-set-key [remap list-buffers] 'ibuffer)
-
-;; treesitter grammars
 ;;; treesitter grammars
 (setq treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
