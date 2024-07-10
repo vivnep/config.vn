@@ -1,30 +1,14 @@
-;;; TODO organize init.el - make it literate?
-;;; TODO fix scrolling
-;;; straight + vertico + consult + embark + marginalia + corfu + meow
 ;; ref https://robbmann.io/emacsd/
 ;; ref https://codeberg.org/ashton314/emacs-bedrock
-;;; melpa
-(with-eval-after-load 'package
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-;;; straight.el package manager
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;;; emacs settings
+;;; TODO convert to org literate config
+;; ref https://www.reddit.com/r/emacs/comments/n6jti8/how_do_you_make_a_literal_initel/
+;; use-package org
+;;; TODO fix scrolling
+;; ref https://github.com/jdtsmith/ultra-scroll-mac/
+;; https://maximzuriel.nl/physics-and-code/emacs-mac-smooth-scroll/article
+;; https://www.reddit.com/r/emacs/comments/fwmqc8/how_to_stop_emacs_from_half_scrolling_from_bottom/
+;; https://github.com/syl20bnr/spacemacs/issues/6097
 (use-package emacs
   :init
   ;; Add prompt indicator to `completing-read-multiple'.
@@ -150,6 +134,7 @@ If the new path's directories does not exist, create them."
 (global-set-key [remap list-buffers] 'ibuffer)
 
 ;; treesitter grammars
+;;; treesitter grammars
 (setq treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
     (c "https://github.com/tree-sitter/tree-sitter-c")
@@ -177,6 +162,10 @@ If the new path's directories does not exist, create them."
 
 ;;; packages
 ;;; TODO add yasnippet for eglot?
+;;; melpa
+(use-package package
+  :config
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 ;; automatically use treesitter
 (use-package treesit-auto
   :ensure t
@@ -236,8 +225,8 @@ If the new path's directories does not exist, create them."
                                    corfu-quit-no-match t
                                    corfu-auto nil)
               (corfu-mode)
-            )
-  )) 
+              )
+	    )) 
 
 ;; eshell
 (use-package eshell
@@ -269,7 +258,7 @@ If the new path's directories does not exist, create them."
   :demand t
   :bind (("C-x j" . avy-goto-line)
          ("s-j"   . avy-goto-char-timer))
-)
+  )
 ;; modify search results en masse
 (use-package wgrep
   :ensure t
@@ -317,18 +306,18 @@ If the new path's directories does not exist, create them."
 (use-package vundo
   :ensure t
   :commands (vundo)
-  :straight (vundo :type git :host github :repo "casouri/vundo")
-  ;;:bind ("C-M-u" . vundo)
+  ;;:bind ("C-M-u" . vundo) ; TODO find a bind
   )
 
 ;; epub reader
 (use-package esxml
- :straight (esxml :type git :host nil :repo "https://github.com/tali713/esxml.git"))
+  :ensure t
+  )
 (use-package nov
- :after esxml
- :straight (nov :type git :host nil :repo "https://depp.brause.cc/nov.el.git")
- :init
-    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+  :after esxml
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
 ;; consult - search and navigate
 ;; Example configuration for Consult
@@ -451,7 +440,7 @@ If the new path's directories does not exist, create them."
   ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
   ;;;; 5. No project support
   ;; (setq consult-project-function nil)
-)
+  )
 
 ;; meow modal editing
 (use-package meow
