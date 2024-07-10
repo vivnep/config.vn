@@ -65,10 +65,8 @@ If the new path's directories does not exist, create them."
   ;; vim-like scrolling behavior
   (setq scroll-margin 5
 	scroll-conservatively 101
-	scroll-up-aggressively 0.01
-	scroll-down-aggressively 0.01
 	scroll-preserve-screen-position t
-	auto-window-vscroll nil)
+	)
   
   ;; alternate between window layouts in a single frame
   (tab-bar-mode)
