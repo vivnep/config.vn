@@ -269,6 +269,7 @@ If the new path's directories does not exist, create them."
               )
 	    ))
 (use-package corfu-terminal
+  :ensure t
   :config
   (unless (display-graphic-p)
     (corfu-terminal-mode +1))
@@ -301,7 +302,9 @@ If the new path's directories does not exist, create them."
   ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
   ;; (global-tempel-abbrev-mode)
 )
-(use-package tempel-collection)
+(use-package tempel-collection
+    :ensure t)
+
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
 ;;   ;; Bind dedicated completion commands
@@ -414,7 +417,8 @@ If the new path's directories does not exist, create them."
   )
 
 ;; epub reader
-(use-package esxml)
+(use-package esxml
+    :ensure t)
 (use-package nov
   :after esxml
   :init
