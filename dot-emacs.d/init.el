@@ -121,21 +121,6 @@ If the new path's directories does not exist, create them."
   ;; use ibuffer for C-x C-b
   (global-set-key [remap list-buffers] 'ibuffer)
   
-
-;;; convenience functions
-(defun init-file ()
-    "Opens the ~/.emacs.d/init.el file."
-    (interactive)
-    (find-file user-init-file))
-
-(defun sudo ()
-  "Use TRAMP to `sudo' the current buffer."
-  (interactive)
-  (when buffer-file-name
-    (find-alternate-file
-     (concat "/sudo:root@localhost:"
-             buffer-file-name))))
-
 ;;; font
 (set-face-attribute 'default nil
                     :family "Berkeley Mono"
@@ -169,7 +154,29 @@ If the new path's directories does not exist, create them."
      (circadian-setup))
    )
   )
+
+;;; convenience functions
+(defun init-file ()
+    "Opens the ~/.emacs.d/init.el file."
+    (interactive)
+    (find-file user-init-file))
+
+(defun reload-config ()
+  "Reloads init.el"
+  (interactive)
+  (load-file user-init-file))
+
+
+(defun sudo ()
+  "Use TRAMP to `sudo' the current buffer."
+  (interactive)
+  (when buffer-file-name
+    (find-alternate-file
+     (concat "/sudo:root@localhost:"
+             buffer-file-name))))
+
 )
+
 ;;; packages
 ;; melpa and nongnu
 (use-package package
@@ -225,6 +232,7 @@ If the new path's directories does not exist, create them."
 (use-package savehist
   :init
   (savehist-mode))
+
 
 ;; minibuffer completion framework
 (use-package vertico  
@@ -634,16 +642,3 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(magit which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection solarized-theme soap-client org orderless nov modus-themes meow marginalia idlwave gruvbox-theme faceup erc embark-consult eglot corfu-terminal circadian cape avy anti-zenburn-theme)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
