@@ -1,16 +1,9 @@
-;; ref https://robbmann.io/emacsd/
-;; ref https://codeberg.org/ashton314/emacs-bedrock
-
-;;; TODO convert to org literate config
-;; ref https://www.reddit.com/r/emacs/comments/n6jti8/how_do_you_make_a_literal_initel/
-;; use-package org
-;;; TODO fix scrolling
-;; ref https://github.com/jdtsmith/ultra-scroll-mac/
-;; https://maximzuriel.nl/physics-and-code/emacs-mac-smooth-scroll/article
-;; https://www.reddit.com/r/emacs/comments/fwmqc8/how_to_stop_emacs_from_half_scrolling_from_bottom/
-;; https://github.com/syl20bnr/spacemacs/issues/6097
 (use-package emacs
   :init
+  ;; always install declared packages
+  (setq use-package-always-ensure t)
+  ;; get updates to builtin packages
+  (setq package-install-upgrade-built-in t)
   ;; Add prompt indicator to `completing-read-multiple'.
   ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
   (defun crm-indicator (args)
@@ -107,10 +100,8 @@ If the new path's directories does not exist, create them."
 (defvar vn-dark-theme 'gruvbox
   "The dark theme to use.")
 
-(use-package modus-themes
-  :ensure t)
-(use-package gruvbox-theme
-  :ensure t)
+(use-package modus-themes)
+(use-package gruvbox-theme)
 
 ;; sets theme using os appearance (depends on emacs-plus) or location
 (if (eq system-type 'darwin)
@@ -124,7 +115,7 @@ If the new path's directories does not exist, create them."
 	   )
   (
    (use-package circadian
-     :ensure t
+    
      :config
      (setq calendar-latitude 37.0)
      (setq calendar-longitude -122.0)
@@ -168,7 +159,7 @@ If the new path's directories does not exist, create them."
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 ;; automatically use treesitter
 (use-package treesit-auto
-  :ensure t
+  
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -176,7 +167,6 @@ If the new path's directories does not exist, create them."
   (global-treesit-auto-mode))
 ;; org mode
 ;;; TODO pretty org headings and stuff
-(use-package org)
 ;; persist history
 (use-package savehist
   :init
@@ -184,7 +174,7 @@ If the new path's directories does not exist, create them."
 
 ;; minibuffer completion framework
 (use-package vertico
-  :ensure t
+  
   :init
   (vertico-mode)
   (setq vertico-count 22) ;; show more candidates
@@ -193,7 +183,7 @@ If the new path's directories does not exist, create them."
 
 ;; rich annotations (e.g. docstrings) in the minibuffer
 (use-package marginalia
-  :ensure t
+  
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle))
   :init
@@ -201,7 +191,7 @@ If the new path's directories does not exist, create them."
 
 ;; buffer completions
 (use-package corfu
-  :ensure t
+  
   ;; Optional customizations
   :custom
   (corfu-cycle t)     ; cycle over at bottom/top
@@ -228,9 +218,49 @@ If the new path's directories does not exist, create them."
               )
 	    )) 
 
+;; allows for company backends to be used with corfu
+;; (use-package cape
+;;   ;; Bind dedicated completion commands
+;;   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+;;   :bind (("C-c p p" . completion-at-point) ;; capf
+;;          ("C-c p t" . complete-tag)        ;; etags
+;;          ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+;;          ("C-c p h" . cape-history)
+;;          ("C-c p f" . cape-file)
+;;          ("C-c p k" . cape-keyword)
+;;          ("C-c p s" . cape-elisp-symbol)
+;;          ("C-c p e" . cape-elisp-block)
+;;          ("C-c p a" . cape-abbrev)
+;;          ("C-c p l" . cape-line)
+;;          ("C-c p w" . cape-dict)
+;;          ("C-c p :" . cape-emoji)
+;;          ("C-c p \\" . cape-tex)
+;;          ("C-c p _" . cape-tex)
+;;          ("C-c p ^" . cape-tex)
+;;          ("C-c p &" . cape-sgml)
+;;          ("C-c p r" . cape-rfc1345))
+;;   :init
+;;   ;; Add to the global default value of `completion-at-point-functions' which is
+;;   ;; used by `completion-at-point'.  The order of the functions matters, the
+;;   ;; first function returning a result wins.  Note that the list of buffer-local
+;;   ;; completion functions takes precedence over the global list.
+;;   (add-hook 'completion-at-point-functions #'cape-dabbrev)
+;;   (add-hook 'completion-at-point-functions #'cape-file)
+;;   (add-hook 'completion-at-point-functions #'cape-elisp-block)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-history)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-keyword)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-tex)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-sgml)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-rfc1345)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-abbrev)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-dict)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+;;   ;;(add-hook 'completion-at-point-functions #'cape-line)
+;; )
+
 ;; eshell
 (use-package eshell
-  :ensure t
+  
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -240,34 +270,34 @@ If the new path's directories does not exist, create them."
 
 ;; which-key: shows a popup of available keybindings when typing a long key seq
 (use-package which-key
-  :ensure t
+  
   :config
   (which-key-mode))
 
 
 ;; orderless style completion
 (use-package orderless
-  :ensure t
+  
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;; jump around
 (use-package avy
-  :ensure t
+  
   :demand t
   :bind (("C-x j" . avy-goto-line)
          ("s-j"   . avy-goto-char-timer))
   )
 ;; modify search results en masse
 (use-package wgrep
-  :ensure t
+  
   :config
   (setq wgrep-auto-save-buffer t))
 
 ;; embark w/ consult integration
 (use-package embark
-  :ensure t
+  
 
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
@@ -298,24 +328,24 @@ If the new path's directories does not exist, create them."
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :ensure t
+  
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 ;; visualize the undo tree
 (use-package vundo
-  :ensure t
+  
   :commands (vundo)
   ;;:bind ("C-M-u" . vundo) ; TODO find a bind
   )
 
 ;; epub reader
 (use-package esxml
-  :ensure t
+  
   )
 (use-package nov
   :after esxml
-  :ensure t
+  
   :init
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
@@ -323,7 +353,7 @@ If the new path's directories does not exist, create them."
 ;; Example configuration for Consult
 ;; alternative bindings here https://codeberg.org/ashton314/emacs-bedrock/src/branch/main/extras/base.el#L44
 (use-package consult
-  :ensure t
+  
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -444,7 +474,7 @@ If the new path's directories does not exist, create them."
 
 ;; meow modal editing
 (use-package meow
-  :ensure t
+  
   :config
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-overwrite-define-key
@@ -531,3 +561,16 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref cape which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
