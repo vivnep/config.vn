@@ -106,11 +106,10 @@ If the new path's directories does not exist, create them."
 ;;; theme
 (defvar vn-light-theme 'modus-operandi-tinted
   "The light theme to use.")
-(defvar vn-dark-theme 'gruvbox
+(defvar vn-dark-theme 'modus-vivendi
   "The dark theme to use.")
 
 (use-package modus-themes)
-(use-package gruvbox-theme)
 
 ;; sets theme using os appearance (depends on emacs-plus) or location
 (if (eq system-type 'darwin)
@@ -577,6 +576,8 @@ If the new path's directories does not exist, create them."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91" "871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" default))
  '(package-selected-packages
    '(bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
 (custom-set-faces
