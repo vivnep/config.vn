@@ -253,6 +253,7 @@ If the new path's directories does not exist, create them."
               )
 	    ))
 (use-package corfu-terminal
+  :ensure t
   :config
   (unless (display-graphic-p)
     (corfu-terminal-mode +1))
@@ -285,7 +286,8 @@ If the new path's directories does not exist, create them."
   ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
   ;; (global-tempel-abbrev-mode)
 )
-(use-package tempel-collection)
+(use-package tempel-collection
+    :ensure t)
 
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
@@ -399,7 +401,8 @@ If the new path's directories does not exist, create them."
   )
 
 ;; epub reader
-(use-package esxml)
+(use-package esxml
+    :ensure t)
 (use-package nov
   :after esxml
   :init
@@ -615,3 +618,16 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(nov esxml vundo tempel-collection tempel corfu-terminal which-key wgrep vertico treesit-auto orderless modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
