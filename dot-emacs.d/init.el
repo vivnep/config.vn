@@ -95,30 +95,33 @@ If the new path's directories does not exist, create them."
      (concat "/sudo:root@localhost:"
              buffer-file-name))))
 
-;;; look and feel
-;; font
+;;; font
 (set-face-attribute 'default nil
                     :family "Berkeley Mono"
                     :height 110
                     :weight 'normal
                     :width 'normal)
-;; theme
-(use-package modus-themes
-  :ensure t)
-(use-package gruvbox-theme
-  :ensure t)
+;;; theme
 (defvar vn-light-theme 'modus-operandi-tinted
   "The light theme to use.")
 (defvar vn-dark-theme 'gruvbox
   "The dark theme to use.")
-(defun my/apply-theme (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (load-theme vn-light-theme t))
-    ('dark (load-theme vn-dark-theme t))))
+
+(use-package modus-themes
+  :ensure t)
+(use-package gruvbox-theme
+  :ensure t)
+
+;; sets theme using os appearance (depends on emacs-plus) or location
 (if (eq system-type 'darwin)
-    (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+    (progn (defun my/apply-theme (appearance)
+	     "Load theme, taking current system APPEARANCE into consideration."
+	     (mapc #'disable-theme custom-enabled-themes)
+	     (pcase appearance
+	       ('light (load-theme vn-light-theme t))
+	       ('dark (load-theme vn-dark-theme t))))
+	   (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+	   )
   (
    (use-package circadian
      :ensure t
