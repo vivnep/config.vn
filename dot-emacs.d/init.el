@@ -7,9 +7,11 @@
   (setq use-package-always-ensure t)
   ;; get updates to builtin packages
   (setq package-install-upgrade-built-in t)
-  ;; Add prompt indicator to `completing-read-multiple'.
-  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+
+  ;; vertico helper
   (defun crm-indicator (args)
+    "Prompt indicator for `completing-read-multiple'.
+Appears as [CRM<`crm-separator'>]"
     (cons (format "[CRM%s] %s"
                   (replace-regexp-in-string
                    "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
@@ -17,19 +19,22 @@
                   (car args))
           (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-  ;; Do not allow the cursor in the minibuffer prompt
+  ;; don't allow cursor into the minibuffer prompt
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (setq enable-recursive-minibuffers t) ; minibuffs in minibuffs
 
-
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
+  ;; "If ‘complete’, TAB first tries to indent the current line, and if the line
+  ;; was already indented, then try to complete the thing at point."
   (setq tab-always-indent 'complete)
 
-  ;; omits unapplicable commands from other modes
+  ;; omits some inapplicable commands from other modes
   (setq read-extended-command-predicate #'command-completion-default-include-p)
+
+  ;; right click shows context menu
+  (when (display-graphic-p)
+    (context-menu-mode))
 
   ;; automatically reread from disk if the underlying file changes
   ;; uses fs events - os dependent
@@ -39,7 +44,7 @@
   (global-auto-revert-mode)
 
   ;; store backups in ~/.emacs.d/backups rather than littering
-  (defun bedrock--backup-file-name (fpath)
+  (defun bedrock/backup-file-name (fpath)
     "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
     (let* ((backupRootDir (concat user-emacs-directory "backups/"))
@@ -47,18 +52,18 @@ If the new path's directories does not exist, create them."
            (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
       (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
       backupFilePath))
-  (setq make-backup-file-name-function 'bedrock--backup-file-name)
+  (setq make-backup-file-name-function 'bedrock/backup-file-name)
 
   (setq vc-follow-symlinks t)                      ; no annoying symlink warning
   (setq inhibit-splash-screen t)                   ; no splash screen
-  (setq line-number-mode t)                        ; Show current line in modeline
-  (setq column-number-mode t)                      ; Show column as well
-  (setq x-underline-at-descent-line nil)           ; Prettier underlines
-  (setq switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+  (setq line-number-mode t)                        ; show current line in modeline
+  (setq column-number-mode t)                      ; show column as well
+  (setq x-underline-at-descent-line nil)           ; prettier underlines
+  (setq switch-to-buffer-obey-display-actions t)   ; make switching buffers more consistent
   (blink-cursor-mode -1)                           ; steady cursor
   (global-visual-line-mode)                        ; line wrap at word boundaries
   (pixel-scroll-precision-mode)                    ; smooth scrolling
-  ;; Display line numbers in programming mode
+  ;; display line numbers in programming mode
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (setq display-line-numbers-width-start 1)        ; avoids horizontal jitter
 
@@ -68,11 +73,19 @@ If the new path's directories does not exist, create them."
 	scroll-preserve-screen-position t
 	)
   
+  ;; hide tab bar until there's more than one tab
+  (setq tab-bar-show 1)  
   ;; alternate between window layouts in a single frame
   (tab-bar-mode)
   ;; move through layout history
   (tab-bar-history-mode) 
   (global-set-key (kbd "M-[") 'tab-bar-history-back)
+  ;; add the time to the tab-bar, if visible
+  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+  (setq display-time-format "%a %F %T")
+  (setq display-time-interval 1)
+  (display-time-mode)
   (global-set-key (kbd "M-]") 'tab-bar-history-forward)
 
   ;; move between windows with S-<arrow>
@@ -104,15 +117,14 @@ If the new path's directories does not exist, create them."
                     :weight 'normal
                     :width 'normal)
 ;;; theme
+(use-package modus-themes)
 (defvar vn-light-theme 'modus-operandi-tinted
   "The light theme to use.")
 (defvar vn-dark-theme 'modus-vivendi
   "The dark theme to use.")
 
-(use-package modus-themes)
-
 ;; sets theme using os appearance (depends on emacs-plus) or location
-(if (eq system-type 'darwin)
+(if (and (eq system-type 'darwin) (display-graphic-p))
     (progn (defun my/apply-theme (appearance)
 	     "Load theme, taking current system APPEARANCE into consideration."
 	     (mapc #'disable-theme custom-enabled-themes)
@@ -121,9 +133,8 @@ If the new path's directories does not exist, create them."
 	       ('dark (load-theme vn-dark-theme t))))
 	   (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 	   )
-  (
-   (use-package circadian
-    
+  (progn
+   (use-package circadian    
      :config
      (setq calendar-latitude 37.0)
      (setq calendar-longitude -122.0)
@@ -133,8 +144,18 @@ If the new path's directories does not exist, create them."
    )
   )
 
-;;; treesitter grammars
-(setq treesit-language-source-alist
+;;; packages
+;; melpa
+(use-package package
+  :config
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
+  )
+
+;; automatically use treesitter
+(use-package treesit-auto
+  :init
+  (setq treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
     (c "https://github.com/tree-sitter/tree-sitter-c")
     (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -160,31 +181,23 @@ If the new path's directories does not exist, create them."
     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
-
-;;; packages
-;;; TODO add yasnippet for eglot?
-;;; melpa
-(use-package package
-  :config
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-;; automatically use treesitter
-(use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
+
 ;; org mode
 ;;; TODO pretty org headings and stuff
 (use-package org)
+
 ;; persist history
 (use-package savehist
   :init
   (savehist-mode))
 
 ;; minibuffer completion framework
-(use-package vertico
-  
+(use-package vertico  
   :init
   (vertico-mode)
   (setq vertico-count 22) ;; show more candidates
@@ -193,7 +206,6 @@ If the new path's directories does not exist, create them."
 
 ;; rich annotations (e.g. docstrings) in the minibuffer
 (use-package marginalia
-  
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle))
   :init
@@ -201,7 +213,6 @@ If the new path's directories does not exist, create them."
 
 ;; buffer completions
 (use-package corfu
-  
   ;; Optional customizations
   :custom
   (corfu-cycle t)     ; cycle over at bottom/top
@@ -226,7 +237,44 @@ If the new path's directories does not exist, create them."
                                    corfu-auto nil)
               (corfu-mode)
               )
-	    )) 
+	    ))
+(use-package corfu-terminal
+  :ensure t
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1))
+  )
+
+;; templates
+(use-package tempel
+  :ensure t
+  :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
+         ("M-*" . tempel-insert))
+  :init
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    ;; Add the Tempel Capf to `completion-at-point-functions'.
+    ;; `tempel-expand' only triggers on exact matches. Alternatively use
+    ;; `tempel-complete' if you want to see all matches, but then you
+    ;; should also configure `tempel-trigger-prefix', such that Tempel
+    ;; does not trigger too often when you don't expect it. NOTE: We add
+    ;; `tempel-expand' *before* the main programming mode Capf, such
+    ;; that it will be tried first.
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+
+  ;; Optionally make the Tempel templates available to Abbrev,
+  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
+  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
+  ;; (global-tempel-abbrev-mode)
+)
+(use-package tempel-collection
+  :ensure t)
 
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
@@ -270,7 +318,6 @@ If the new path's directories does not exist, create them."
 
 ;; eshell
 (use-package eshell
-  
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -280,35 +327,30 @@ If the new path's directories does not exist, create them."
 
 ;; which-key: shows a popup of available keybindings when typing a long key seq
 (use-package which-key
-  
   :config
   (which-key-mode))
 
-
 ;; orderless style completion
 (use-package orderless
-  
   :custom
+  ;; basic completion is kept as a fallback
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;; jump around
 (use-package avy
-  
   :demand t
   :bind (("C-x j" . avy-goto-line)
          ("s-j"   . avy-goto-char-timer))
   )
+
 ;; modify search results en masse
 (use-package wgrep
-  
   :config
   (setq wgrep-auto-save-buffer t))
 
 ;; embark w/ consult integration
 (use-package embark
-  
-
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
    ("C-;" . embark-dwim)        ;; good alternative: M-.
@@ -335,35 +377,27 @@ If the new path's directories does not exist, create them."
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
-
-;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 ;; visualize the undo tree
 (use-package vundo
-  
   :commands (vundo)
   ;;:bind ("C-M-u" . vundo) ; TODO find a bind
   )
 
 ;; epub reader
-(use-package esxml
-  
-  )
+(use-package esxml)
 (use-package nov
   :after esxml
-  
   :init
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
 ;; consult - search and navigate
 ;; Example configuration for Consult
 ;; alternative bindings here https://codeberg.org/ashton314/emacs-bedrock/src/branch/main/extras/base.el#L44
-(use-package consult
-  
+(use-package consult  
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -484,7 +518,6 @@ If the new path's directories does not exist, create them."
 
 ;; meow modal editing
 (use-package meow
-  
   :config
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-overwrite-define-key
@@ -577,9 +610,9 @@ If the new path's directories does not exist, create them."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91" "871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" default))
+   '("e410458d3e769c33e0865971deb6e8422457fad02bf51f7862fa180ccc42c032" "8d146df8bd640320d5ca94d2913392bc6f763d5bc2bb47bed8e14975017eea91" "871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" default))
  '(package-selected-packages
-   '(bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
+   '(tempel-collection tempel bind-key eglot eldoc erc faceup flymake idlwave jsonrpc org project soap-client tramp verilog-mode xref which-key wgrep vundo vertico use-package treesit-auto solarized-theme orderless nov modus-themes meow marginalia gruvbox-theme embark-consult corfu circadian avy anti-zenburn-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
