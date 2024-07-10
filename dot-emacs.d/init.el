@@ -7,7 +7,21 @@
   (setq use-package-always-ensure t)
   ;; get updates to builtin packages
   (setq package-install-upgrade-built-in t)
+  ;; refreshes package cache if we install anything
+  (defvar genehack/packages-refreshed nil
+    "Flag for whether package lists have been refreshed yet.")
 
+  (defun genehack/package-refresh (&rest args)
+    "Refresh package metadata, if needed.
+Ignores `ARGS'."
+    (unless (eq genehack/packages-refreshed t)
+      (progn
+        (package-refresh-contents)
+        (setq genehack/packages-refreshed t))))
+
+  (advice-add 'package-install :before #'genehack/package-refresh)
+
+  
   ;; track recently opened files
   (recentf-mode t)
   
@@ -106,7 +120,7 @@ If the new path's directories does not exist, create them."
   (global-set-key (kbd "M-o") 'other-window)
   ;; use ibuffer for C-x C-b
   (global-set-key [remap list-buffers] 'ibuffer)
-  )
+  
 
 ;;; convenience functions
 (defun init-file ()
@@ -155,15 +169,13 @@ If the new path's directories does not exist, create them."
      (circadian-setup))
    )
   )
-
+)
 ;;; packages
-;; melpa
+;; melpa and nongnu
 (use-package package
   :config
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
-  (unless package-archive-contents
-  (package-refresh-contents))
   )
 
 ;; automatically use treesitter
@@ -204,6 +216,10 @@ If the new path's directories does not exist, create them."
 ;; org mode
 ;;; TODO pretty org headings and stuff
 (use-package org)
+
+;; nice git porcelain
+(use-package magit
+  :ensure t)
 
 ;; persist history
 (use-package savehist
@@ -286,7 +302,6 @@ If the new path's directories does not exist, create them."
   ;; (global-tempel-abbrev-mode)
 )
 (use-package tempel-collection)
-
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
 ;;   ;; Bind dedicated completion commands
@@ -615,3 +630,16 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(magit which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection solarized-theme soap-client org orderless nov modus-themes meow marginalia idlwave gruvbox-theme faceup erc embark-consult eglot corfu-terminal circadian cape avy anti-zenburn-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
