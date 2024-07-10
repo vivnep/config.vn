@@ -1,11 +1,6 @@
 ;; ref https://robbmann.io/emacsd/
 ;; ref https://codeberg.org/ashton314/emacs-bedrock
 
-;;; TODO fix scrolling
-;; ref https://github.com/jdtsmith/ultra-scroll-mac/
-;; https://maximzuriel.nl/physics-and-code/emacs-mac-smooth-scroll/article
-;; https://www.reddit.com/r/emacs/comments/fwmqc8/how_to_stop_emacs_from_half_scrolling_from_bottom/
-;; https://github.com/syl20bnr/spacemacs/issues/6097
 (use-package emacs
   :init
   ;; always install declared packages
@@ -67,6 +62,14 @@ If the new path's directories does not exist, create them."
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (setq display-line-numbers-width-start 1)        ; avoids horizontal jitter
 
+  ;; vim-like scrolling behavior
+  (setq scroll-margin 5
+	scroll-conservatively 101
+	scroll-up-aggressively 0.01
+	scroll-down-aggressively 0.01
+	scroll-preserve-screen-position t
+	auto-window-vscroll nil)
+  
   ;; alternate between window layouts in a single frame
   (tab-bar-mode)
   ;; move through layout history
