@@ -3,4 +3,4 @@ dot-config/tmux/plugins/*
 dot-emacs.d/*
 !dot-emacs.d/init.el
 !dot-emacs.d/early-init.el
-!dot-emacs.d/config.org
+!dot-emacs.d/init.org
