@@ -330,6 +330,12 @@ If the new path's directories does not exist, create them."
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
 
+  :bind
+  (:map corfu-map
+        ;; ("SPC" . corfu-insert-separator)
+        ("C-n" . corfu-next)
+        ("C-p" . corfu-previous))
+  
   :init
   (global-corfu-mode)
   (corfu-history-mode)
