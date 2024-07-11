@@ -489,6 +489,19 @@ If the new path's directories does not exist, create them."
   ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
   ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
+    ;; Add the option to run embark when using avy
+  (defun bedrock/avy-action-embark (pt)
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t)
+
+  ;; After invoking avy-goto-char-timer, hit "." to run embark at the next
+  ;; candidate you select
+  (setf (alist-get ?. avy-dispatch-alist) 'bedrock/avy-action-embark)
   :config
 
   ;; Hide the mode line of the Embark live/completions buffers
@@ -515,10 +528,7 @@ If the new path's directories does not exist, create them."
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
 ;; consult - search and navigate
-;; Example configuration for Consult
-;; alternative bindings here https://codeberg.org/ashton314/emacs-bedrock/src/branch/main/extras/base.el#L44
 (use-package consult  
-  ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -557,6 +567,7 @@ If the new path's directories does not exist, create them."
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
+         ("M-s s" . consult-line)
          ("M-s L" . consult-line-multi)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
