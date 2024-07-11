@@ -378,14 +378,14 @@ If the new path's directories does not exist, create them."
 ;;   ;;(add-hook 'completion-at-point-functions #'cape-line)
 ;; )
 
-;; better help buffer
-(use-package helpful
-  :ensure t
-  :bind
-  (("C-h f" . helpful-callable)
-   ("C-h v" . helpful-variable)
-   ("C-h x" . helpful-command)
-   ("C-c C-d" . helpful-at-point)))
+;; better help buffer (but the way it handles history and window placement is worse)
+;; (use-package helpful
+;;   :ensure t
+;;   :bind
+;;   (("C-h f" . helpful-callable)
+;;    ("C-h v" . helpful-variable)
+;;    ("C-h x" . helpful-command)
+;;    ("C-c C-d" . helpful-at-point)))
 
 ;; eshell
 (use-package eshell
