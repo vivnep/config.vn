@@ -590,6 +590,11 @@ If the new path's directories does not exist, create them."
   ;; (setq consult-project-function nil)
   )
 
+;; save windows configurations
+(use-package burly
+  :config
+  (burly-tabs-mode))
+
 ;; meow modal editing
 (use-package meow
   :config
