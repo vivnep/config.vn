@@ -249,8 +249,11 @@ If the new path's directories does not exist, create them."
 (use-package dashboard
   :ensure t
   :config
+  (setq dashboard-image-banner-max-height 300)
+  (setq dashboard-image-banner-max-width 300)
   (setq dashboard-banner-logo-title "Emacs")
-  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-extra-images (if (file-directory-p "~/.emacs.d/decor") (directory-files "~/.emacs.d/decor" t ".png")))
+  (setq dashboard-startup-banner (cons 'logo dashboard-extra-images))
   (setq dashboard-vertically-center-content t) ;FIXME doesn't center on startup https://github.com/emacs-dashboard/emacs-dashboard/issues/534
   (setq dashboard-center-content t)
   (setq dashboard-items '((projects  . 5)
