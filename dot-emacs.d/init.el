@@ -198,6 +198,22 @@ If the new path's directories does not exist, create them."
   (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
   )
 
+(use-package eglot
+  ;; Configure hooks to automatically turn-on eglot for selected modes
+  ; :hook
+  ; (((python-mode ruby-mode elixir-mode) . eglot))
+
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-extend-to-xref t)              ; activate Eglot in referenced non-project files
+
+  :config
+  (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
+  ;; Sometimes you need to tell Eglot where to find the language server
+  ; (add-to-list 'eglot-server-programs
+  ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
+  )
+
 ;; automatically use treesitter
 (use-package treesit-auto
   :init
