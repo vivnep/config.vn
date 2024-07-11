@@ -18,10 +18,8 @@ Ignores `ARGS'."
       (progn
         (package-refresh-contents)
         (setq genehack/packages-refreshed t))))
-
   (advice-add 'package-install :before #'genehack/package-refresh)
 
-  
   ;; track recently opened files
   (recentf-mode t)
   
@@ -104,15 +102,16 @@ If the new path's directories does not exist, create them."
   ;; alternate between window layouts in a single frame
   (tab-bar-mode)
   ;; move through layout history
-  (tab-bar-history-mode) 
+  (tab-bar-history-mode)
   (global-set-key (kbd "M-[") 'tab-bar-history-back)
-  ;; add the time to the tab-bar, if visible
-  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
-  (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+  (global-set-key (kbd "M-]") 'tab-bar-history-forward)
+  (setq tab-bar-close-button-show nil)
+  (setq tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
+  
+  ;; show time in modeline
   (setq display-time-format "%a %F %T")
   (setq display-time-interval 1)
   (display-time-mode)
-  (global-set-key (kbd "M-]") 'tab-bar-history-forward)
 
   ;; move between windows with S-<arrow>
   (windmove-default-keybindings 'shift)
@@ -122,60 +121,60 @@ If the new path's directories does not exist, create them."
   (global-set-key [remap list-buffers] 'ibuffer)
   
 ;;; font
-(set-face-attribute 'default nil
-                    :family "Berkeley Mono"
-                    :height 110
-                    :weight 'normal
-                    :width 'normal)
+  (set-face-attribute 'default nil
+                      :family "Berkeley Mono"
+                      :height 110
+                      :weight 'normal
+                      :width 'normal)
 ;;; theme
-(use-package modus-themes)
-(defvar vn-light-theme 'modus-operandi
-  "The light theme to use.")
-(defvar vn-dark-theme 'modus-vivendi
-  "The dark theme to use.")
+  (use-package modus-themes)
+  (defvar vn-light-theme 'modus-operandi
+    "The light theme to use.")
+  (defvar vn-dark-theme 'modus-vivendi
+    "The dark theme to use.")
 
-;; sets theme using os appearance (depends on emacs-plus) or location
-(if (and (eq system-type 'darwin) (display-graphic-p))
-    (progn (defun my/apply-theme (appearance)
-	     "Load theme, taking current system APPEARANCE into consideration."
-	     (mapc #'disable-theme custom-enabled-themes)
-	     (pcase appearance
-	       ('light (load-theme vn-light-theme t))
-	       ('dark (load-theme vn-dark-theme t))))
-	   (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
-	   )
-  (progn
-   (use-package circadian    
-     :config
-     (setq calendar-latitude 37.0)
-     (setq calendar-longitude -122.0)
-     (setq circadian-themes `((:sunrise . ,vn-light-theme)
-                              (:sunset  . ,vn-dark-theme)))
-     (circadian-setup))
-   )
-  )
+  ;; sets theme using os appearance (depends on emacs-plus) or location
+  (if (and (eq system-type 'darwin) (display-graphic-p))
+      (progn (defun my/apply-theme (appearance)
+	       "Load theme, taking current system APPEARANCE into consideration."
+	       (mapc #'disable-theme custom-enabled-themes)
+	       (pcase appearance
+	         ('light (load-theme vn-light-theme t))
+	         ('dark (load-theme vn-dark-theme t))))
+	     (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+	     )
+    (progn
+      (use-package circadian    
+        :config
+        (setq calendar-latitude 37.0)
+        (setq calendar-longitude -122.0)
+        (setq circadian-themes `((:sunrise . ,vn-light-theme)
+                                 (:sunset  . ,vn-dark-theme)))
+        (circadian-setup))
+      )
+    )
 
 ;;; convenience functions
-(defun init-file ()
+  (defun init-file ()
     "Opens the ~/.emacs.d/init.el file."
     (interactive)
     (find-file user-init-file))
 
-(defun reload-config ()
-  "Reloads init.el"
-  (interactive)
-  (load-file user-init-file))
+  (defun reload-config ()
+    "Reloads init.el"
+    (interactive)
+    (load-file user-init-file))
 
 
-(defun sudo ()
-  "Use TRAMP to `sudo' the current buffer."
-  (interactive)
-  (when buffer-file-name
-    (find-alternate-file
-     (concat "/sudo:root@localhost:"
-             buffer-file-name))))
+  (defun sudo ()
+    "Use TRAMP to `sudo' the current buffer."
+    (interactive)
+    (when buffer-file-name
+      (find-alternate-file
+       (concat "/sudo:root@localhost:"
+               buffer-file-name))))
 
-)
+  )
 
 ;;; packages
 ;; melpa and nongnu
@@ -189,31 +188,31 @@ If the new path's directories does not exist, create them."
 (use-package treesit-auto
   :init
   (setq treesit-language-source-alist
-  '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-    (c "https://github.com/tree-sitter/tree-sitter-c")
-    (cmake "https://github.com/uyha/tree-sitter-cmake")
-    (common-lisp "https://github.com/theHamsta/tree-sitter-commonlisp")
-    (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-    (css "https://github.com/tree-sitter/tree-sitter-css")
-    (csharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
-    (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-    (go "https://github.com/tree-sitter/tree-sitter-go")
-    (go-mod "https://github.com/camdencheek/tree-sitter-go-mod")
-    (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
-    (html "https://github.com/tree-sitter/tree-sitter-html")
-    (js . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-    (json "https://github.com/tree-sitter/tree-sitter-json")
-    (lua "https://github.com/Azganoth/tree-sitter-lua")
-    (make "https://github.com/alemuller/tree-sitter-make")
-    (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-    (python "https://github.com/tree-sitter/tree-sitter-python")
-    (r "https://github.com/r-lib/tree-sitter-r")
-    (rust "https://github.com/tree-sitter/tree-sitter-rust")
-    (swift "https://github.com/tree-sitter/tree-sitter-swift")
-    (toml "https://github.com/tree-sitter/tree-sitter-toml")
-    (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-    (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-    (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+        '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+          (c "https://github.com/tree-sitter/tree-sitter-c")
+          (cmake "https://github.com/uyha/tree-sitter-cmake")
+          (common-lisp "https://github.com/theHamsta/tree-sitter-commonlisp")
+          (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+          (css "https://github.com/tree-sitter/tree-sitter-css")
+          (csharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
+          (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+          (go "https://github.com/tree-sitter/tree-sitter-go")
+          (go-mod "https://github.com/camdencheek/tree-sitter-go-mod")
+          (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
+          (html "https://github.com/tree-sitter/tree-sitter-html")
+          (js . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+          (json "https://github.com/tree-sitter/tree-sitter-json")
+          (lua "https://github.com/Azganoth/tree-sitter-lua")
+          (make "https://github.com/alemuller/tree-sitter-make")
+          (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+          (python "https://github.com/tree-sitter/tree-sitter-python")
+          (r "https://github.com/r-lib/tree-sitter-r")
+          (rust "https://github.com/tree-sitter/tree-sitter-rust")
+          (swift "https://github.com/tree-sitter/tree-sitter-swift")
+          (toml "https://github.com/tree-sitter/tree-sitter-toml")
+          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+          (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+          (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -337,9 +336,9 @@ If the new path's directories does not exist, create them."
   ;; either locally or globally. `expand-abbrev' is bound to C-x '.
   ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
   ;; (global-tempel-abbrev-mode)
-)
+  )
 (use-package tempel-collection
-    :ensure t)
+  :ensure t)
 
 ;; allows for company backends to be used with corfu
 ;; (use-package cape
@@ -463,7 +462,7 @@ If the new path's directories does not exist, create them."
 
 ;; epub reader
 (use-package esxml
-    :ensure t)
+  :ensure t)
 (use-package nov
   :after esxml
   :init
