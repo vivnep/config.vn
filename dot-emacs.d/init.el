@@ -23,6 +23,20 @@
       (find-alternate-file
        (concat "/sudo:root@localhost:"
                buffer-file-name))))
+
+  (defmacro k-time (&rest body)
+    "Measure and return the time it takes evaluating BODY."
+    `(let ((time (current-time)))
+       ,@body
+       (float-time (time-since time))))
+
+  ;; When idle for 15sec run the GC no matter what.
+  (defvar k-gc-timer
+    (run-with-idle-timer 15 t
+                         (lambda ()
+                           (message "Garbage Collector has run for %.06fsec"
+                                    (k-time (garbage-collect))))))
+  
   ;; always install declared packages
   (setq use-package-always-ensure t)
   ;; get updates to builtin packages
