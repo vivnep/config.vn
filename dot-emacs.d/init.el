@@ -129,7 +129,7 @@ If the new path's directories does not exist, create them."
                     :width 'normal)
 ;;; theme
 (use-package modus-themes)
-(defvar vn-light-theme 'modus-operandi-tinted
+(defvar vn-light-theme 'modus-operandi
   "The light theme to use.")
 (defvar vn-dark-theme 'modus-vivendi
   "The dark theme to use.")
@@ -676,16 +676,3 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(helpful which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection solarized-theme soap-client org orderless nov modus-themes meow marginalia magit idlwave gruvbox-theme faceup erc embark-consult eglot dashboard corfu-terminal circadian cape avy anti-zenburn-theme)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
