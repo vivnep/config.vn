@@ -647,8 +647,12 @@ If the new path's directories does not exist, create them."
   ;; (setq consult-project-function nil)
   )
 
+
+;;; 'workspaces' in this config rely on a combination of tab-bar-mode, project.el and
+;;; burly, with consult making nice switching interfaces for everything
 ;; save windows configurations
 (use-package burly
+  ;; TODO bind burly-reset-tab, burly-bookmark-windows, burly-open-bookmark, burly-open-last-bookmark
   :config
   (burly-tabs-mode))
 
