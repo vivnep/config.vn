@@ -3,6 +3,26 @@
 
 (use-package emacs
   :init
+
+;;; defuns
+  (defun init-file ()
+    "Opens the ~/.emacs.d/init.el file."
+    (interactive)
+    (find-file user-init-file))
+
+  (defun reload-config ()
+    "Reloads init.el"
+    (interactive)
+    (load-file user-init-file))
+
+
+  (defun sudo ()
+    "Use TRAMP to `sudo' the current buffer."
+    (interactive)
+    (when buffer-file-name
+      (find-alternate-file
+       (concat "/sudo:root@localhost:"
+               buffer-file-name))))
   ;; always install declared packages
   (setq use-package-always-ensure t)
   ;; get updates to builtin packages
@@ -153,26 +173,6 @@ If the new path's directories does not exist, create them."
         (circadian-setup))
       )
     )
-
-;;; convenience functions
-  (defun init-file ()
-    "Opens the ~/.emacs.d/init.el file."
-    (interactive)
-    (find-file user-init-file))
-
-  (defun reload-config ()
-    "Reloads init.el"
-    (interactive)
-    (load-file user-init-file))
-
-
-  (defun sudo ()
-    "Use TRAMP to `sudo' the current buffer."
-    (interactive)
-    (when buffer-file-name
-      (find-alternate-file
-       (concat "/sudo:root@localhost:"
-               buffer-file-name))))
 
   )
 
