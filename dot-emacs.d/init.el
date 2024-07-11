@@ -322,6 +322,7 @@ If the new path's directories does not exist, create them."
   (corfu-cycle t)     ; cycle over at bottom/top
   (corfu-auto t)                 ;; Enable auto completion
   (corfu-auto-delay 0.0)
+  (corfu-popupinfo-delay '(0.25 . 0.1))
   (corfu-preview-current nil)    ;; Disable current candidate preview
   (corfu-auto-prefix 2)
   ;; (corfu-separator ?\s)          ;; Orderless field separator
