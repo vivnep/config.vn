@@ -241,9 +241,7 @@ If the new path's directories does not exist, create them."
   (tabspaces-todo-file-name "project-todo.org")
   ;; sessions
   (tabspaces-session t)
-  (tabspaces-session-auto-restore t)
-  :config
-  (tabspaces-mode))
+  (tabspaces-session-auto-restore t))
 
 ;; persist history
 (use-package savehist
@@ -606,25 +604,7 @@ If the new path's directories does not exist, create them."
   ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
   ;;;; 5. No project support
   ;; (setq consult-project-function nil)
-
-  ;; tabspaces integration
-  ;; hide full buffer list (still available with "b" prefix)
-  (consult-customize consult--source-buffer :hidden t :default nil)
-  ;; set consult-workspace buffer list
-  (defvar consult--source-workspace
-    (list :name     "Workspace Buffers"
-          :narrow   ?w
-          :history  'buffer-name-history
-          :category 'buffer
-          :state    #'consult--buffer-state
-          :default  t
-          :items    (lambda () (consult--buffer-query
-                                :predicate #'tabspaces--local-buffer-p
-                                :sort 'visibility
-                                :as #'buffer-name)))
-
-    "Set workspace buffer list for consult-buffer.")
-  (add-to-list 'consult-buffer-sources 'consult--source-workspace))
+  )
 
 ;; meow modal editing
 (use-package meow
