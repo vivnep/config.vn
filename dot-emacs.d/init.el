@@ -1,9 +1,5 @@
-;; ref https://robbmann.io/emacsd/
-;; ref https://codeberg.org/ashton314/emacs-bedrock
-
 (use-package emacs
   :init
-
 ;;; defuns
   (defun init-file ()
     "Opens the ~/.emacs.d/init.el file."
@@ -14,7 +10,6 @@
     "Reloads init.el"
     (interactive)
     (load-file user-init-file))
-
 
   (defun sudo ()
     "Use TRAMP to `sudo' the current buffer."
@@ -36,7 +31,71 @@
                          (lambda ()
                            (message "Garbage Collector has run for %.06fsec"
                                     (k-time (garbage-collect))))))
-  
+
+  (defun toggle-window-split ()
+  "Switch between horizontal and vertical split window layout."
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+  (defun renz/org-babel-tangle-jump-to-src ()
+    "The opposite of `org-babel-tangle-jump-to-org'.
+Jumps to an Org src block from tangled code."
+    (interactive)
+    (if (org-in-block-p)
+        (let* ((header (car (org-babel-tangle-single-block 1 'only-this-block)))
+               (tangle (car header))
+               (lang (caadr header))
+               (buffer (nth 2 (cadr header)))
+               (org-id (nth 3 (cadr header)))
+               (source-name (nth 4 (cadr header)))
+               (search-comment (org-fill-template
+                                org-babel-tangle-comment-format-beg
+                                `(("link" . ,org-id) ("source-name" . ,source-name))))
+               (file (expand-file-name
+                      (org-babel-effective-tangled-filename buffer lang tangle))))
+          (if (not (file-exists-p file))
+              (message "File does not exist. 'org-babel-tangle' first to create file.")
+            (find-file file)
+            (beginning-of-buffer)
+            (search-forward search-comment)))
+      (message "Cannot jump to tangled file because point is not at org src block.")))
+
+  (defun renz/list-files-with-absolute-path (directory)
+  "Return a list of org files in DIRECTORY with their absolute paths."
+  (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
+
+  ;; store common buffers to registers
+  (set-register ?S '(buffer . "*scratch*"))
+  (set-register ?I `(file . ,(expand-file-name "init.el" user-emacs-directory)))
+
+  ;; C-c bindings
+  (global-set-key (kbd "C-c b") #'compile)
+  (global-set-key (kbd "C-c B") #'recompile)
+  (global-set-key (kbd "C-c c") #'calendar)
+  (global-set-key (kbd "C-c f") #'ffap)
+  (global-set-key (kbd "C-c s") #'toggle-window-split)
+
   ;; always install declared packages
   (setq use-package-always-ensure t)
   ;; get updates to builtin packages
@@ -56,7 +115,19 @@ Ignores `ARGS'."
 
   ;; track recently opened files
   (recentf-mode t)
-  
+
+  ;; no bell
+  (setq ring-bell-function 'ignore)
+
+  ;; start server for emacsclient
+  (server-start)
+
+  ;; shorten yes/no answer prompts to y/n
+  (setq use-short-answers t)
+
+  ;; Don't hang when visiting files with extremely long lines
+  (global-so-long-mode t)
+
   ;; vertico helper
   (defun crm-indicator (args)
     "Prompt indicator for `completing-read-multiple'.
@@ -80,6 +151,10 @@ Appears as [CRM<`crm-separator'>]"
 
   ;; omits some inapplicable commands from other modes
   (setq read-extended-command-predicate #'command-completion-default-include-p)
+
+  ;; makes the mark buffer bigger
+  (setq-default mark-ring-max 32)
+  (setq global-mark-ring-max 32)
 
   ;; right click shows context menu
   (when (display-graphic-p)
@@ -112,6 +187,7 @@ If the new path's directories does not exist, create them."
   (blink-cursor-mode -1)                           ; steady cursor
   (global-visual-line-mode)                        ; line wrap at word boundaries
   (pixel-scroll-precision-mode)                    ; smooth scrolling
+  (setq-default fill-column 80)
   ;; display line numbers in programming mode
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (setq display-line-numbers-width-start 1)        ; avoids horizontal jitter
@@ -121,10 +197,30 @@ If the new path's directories does not exist, create them."
 	scroll-conservatively 101
 	scroll-preserve-screen-position t
 	)
+  (setq pixel-scroll-precision-large-scroll-height 35.0)
+
+  ;; highlight the current line
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'text-mode-hook #'hl-line-mode)
+  (add-hook 'org-mode-hook #'hl-line-mode)
+
   ;; spell checker
   (cond ((executable-find "aspell")
        (setq ispell-program-name "aspell"
              ispell-really-aspell t)))
+
+  ;; delete selection on yank
+  (delete-selection-mode t)
+
+  ;; pop marks repeatedly after first prefix
+  (setq set-mark-command-repeat-pop t)
+  ;; And, because I always forget it, to pop a global mark you use C-x C-<SPC>.
+  ;; The local version, C-u C-<SPC> will only pop marks from the current buffer.
+  ;; So the C-x C-<SPC> version is much closer to how Vim's jump stack works.
+
+
+  ;; delete trailing whitespace on save
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   ;; auto-matching parens
   (electric-pair-mode t)
@@ -134,9 +230,15 @@ If the new path's directories does not exist, create them."
 
   ;; save place in files
   (save-place-mode t)
-  
+
+  ;; view follows output until first error
+  (setq compilation-scroll-output 'first-error)
+
+  ;; confirm quitting emacs
+  (setq confirm-kill-emacs 'yes-or-no-p)
+
   ;; hide tab bar until there's more than one tab
-  (setq tab-bar-show 1)  
+  (setq tab-bar-show 1)
   ;; alternate between window layouts in a single frame
   (tab-bar-mode)
   ;; move through layout history
@@ -145,11 +247,6 @@ If the new path's directories does not exist, create them."
   (global-set-key (kbd "M-]") 'tab-bar-history-forward)
   (setq tab-bar-close-button-show nil)
   (setq tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
-  
-  ;; show time in modeline
-  (setq display-time-format "%a %F %T")
-  (setq display-time-interval 1)
-  (display-time-mode)
 
   ;; move between windows with S-<arrow>
   (windmove-default-keybindings 'shift)
@@ -157,7 +254,7 @@ If the new path's directories does not exist, create them."
   (global-set-key (kbd "M-o") 'other-window)
   ;; use ibuffer for C-x C-b
   (global-set-key [remap list-buffers] 'ibuffer)
-  
+
 ;;; font
   (set-face-attribute 'default nil
                       :family "Berkeley Mono"
@@ -182,7 +279,7 @@ If the new path's directories does not exist, create them."
 	     (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 	     )
     (progn
-      (use-package circadian    
+      (use-package circadian
         :config
         (setq calendar-latitude 37.0)
         (setq calendar-longitude -122.0)
@@ -254,8 +351,107 @@ If the new path's directories does not exist, create them."
   (global-treesit-auto-mode))
 
 ;; org mode
-;;; TODO pretty org headings and stuff
-(use-package org)
+(use-package org
+  :hook
+  ((org-mode . flyspell-mode))
+  :bind (:map global-map
+              ("C-c l s" . org-store-link)          ; Mnemonic: link → store
+              ("C-c l i" . org-insert-link-global)
+              ("C-c o a" . org-agenda)
+              ("C-c o b d" . org-babel-detangle)
+              ("C-c o b o" . org-babel-tangle-jump-to-org)
+              ("C-c o b s" . renz/org-babel-tangle-jump-to-src)
+              ("C-c o k" . org-babel-remove-result)
+              ) ; Mnemonic: link → insert
+
+  :config
+  (setq org-directory "~/Documents/org/")
+  ;; (setq org-agenda-files '("inbox.org" "work.org"))
+  (setq org-agenda-files (renz/list-files-with-absolute-path org-directory))
+  ;; allow image resizing
+  (setq org-image-actual-width nil)
+  (setq org-refile-targets 'FIXME)
+  ;; Default tags
+  (setq org-tag-alist '(
+                        ;; locale
+                        (:startgroup)
+                        ("home" . ?h)
+                        ("work" . ?w)
+                        ("school" . ?s)
+                        (:endgroup)
+                        (:newline)
+                        ;; scale
+                        (:startgroup)
+                        ("one-shot" . ?o)
+                        ("project" . ?j)
+                        ("tiny" . ?t)
+                        (:endgroup)
+                        ;; misc
+                        ("meta")
+                        ("review")
+                        ("reading")))
+  (add-to-list 'org-export-backends 'md)
+
+  ;; Make org-open-at-point follow file links in the same window
+  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
+
+  ;; Make exporting quotes better
+  (setq org-export-with-smart-quotes t)
+  ;; Instead of just two states (TODO, DONE) we set up a few different states
+  ;; that a task can be in.
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAITING(w@/!)" "STARTED(s!)" "|" "DONE(d!)" "OBSOLETE(o@)")))
+  ;; Refile configuration
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-use-outline-path 'file)
+  (setq org-capture-templates
+        '(("c" "Default Capture" entry (file "inbox.org")
+           "* TODO %?\n%U\n%i")
+          ;; Capture and keep an org-link to the thing we're currently working with
+          ("r" "Capture with Reference" entry (file "inbox.org")
+           "* TODO %?\n%U\n%i\n%a")
+          ;; Define a section
+          ("w" "Work")
+          ("wm" "Work meeting" entry (file+headline "work.org" "Meetings")
+           "** TODO %?\n%U\n%i\n%a")
+          ("wr" "Work report" entry (file+headline "work.org" "Reports")
+           "** TODO %?\n%U\n%i\n%a")))
+(setq
+ ;; Edit settings
+ org-auto-align-tags nil
+ org-tags-column 0
+ org-catch-invisible-edits 'show-and-error
+ org-special-ctrl-a/e t
+ org-insert-heading-respect-content t
+
+ ;; Org styling, hide markup etc.
+ org-hide-emphasis-markers t
+ org-pretty-entities t
+
+ ;; Agenda styling
+ org-agenda-tags-column 0
+ org-agenda-block-separator ?─
+ org-agenda-time-grid
+ '((daily today require-timed)
+   (800 1000 1200 1400 1600 1800 2000)
+   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+ org-agenda-current-time-string
+ "◀── now ─────────────────────────────────────────────────")
+
+;; Ellipsis styling
+(setq org-ellipsis "…")
+(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+
+
+  (setq org-agenda-custom-commands
+        '(("n" "Agenda and All Todos"
+           ((agenda)
+            (todo)))
+          ("w" "Work" agenda ""
+           ((org-agenda-files '("work.org")))))))
+(use-package org-modern
+  :config
+  (global-org-modern-mode))
 
 ;; nice git porcelain
 (use-package magit
@@ -296,7 +492,7 @@ If the new path's directories does not exist, create them."
   (dashboard-setup-startup-hook))
 
 ;; minibuffer completion framework
-(use-package vertico  
+(use-package vertico
   :init
   (vertico-mode)
   (setq vertico-count 22) ;; show more candidates
@@ -321,7 +517,6 @@ If the new path's directories does not exist, create them."
 
 ;; buffer completions
 (use-package corfu
-  ;; Optional customizations
   :custom
   (corfu-cycle t)     ; cycle over at bottom/top
   (corfu-auto t)                 ;; Enable auto completion
@@ -339,7 +534,7 @@ If the new path's directories does not exist, create them."
         ;; ("SPC" . corfu-insert-separator)
         ("C-n" . corfu-next)
         ("C-p" . corfu-previous))
-  
+
   :init
   (global-corfu-mode)
   (corfu-history-mode)
@@ -467,7 +662,7 @@ If the new path's directories does not exist, create them."
          ("s-j"   . avy-goto-char-timer))
   )
 
-;; modify search results en masse
+;; modify results in grep buffers
 (use-package wgrep
   :config
   (setq wgrep-auto-save-buffer t))
@@ -532,7 +727,7 @@ If the new path's directories does not exist, create them."
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
 ;; consult - search and navigate
-(use-package consult  
+(use-package consult
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -651,6 +846,11 @@ If the new path's directories does not exist, create them."
   ;; (setq consult-project-function nil)
   )
 
+;; diagnostics jumping binds
+(use-package flymake
+  :bind (:map flymake-mode-map
+         ("C-c n" . flymake-goto-next-error)
+         ("C-c p" . flymake-goto-prev-error)))
 
 ;;; 'workspaces' in this config rely on a combination of tab-bar-mode, project.el and
 ;;; burly, with consult making nice switching interfaces for everything
@@ -748,3 +948,32 @@ If the new path's directories does not exist, create them."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1))
+
+;; use ripgrep instead of grep
+(use-package grep
+  :config
+  (when (executable-find "rg")
+    (setq grep-program "rg")
+    (grep-apply-setting
+     'grep-find-command
+     '("rg -n -H --color always --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 42))))
+
+;; shorten file paths in grep/compilations buffers
+(use-package scf-mode
+  :ensure t
+  :load-path "site-lisp"
+  :hook (grep-mode . (lambda () (scf-mode 1))))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(org-modern scf-mode which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection tabspaces solarized-theme soap-client org orderless nov modus-themes meow marginalia magit idlwave helpful gruvbox-theme faceup erc embark-consult eglot eat dashboard corfu-terminal circadian cape burly avy anti-zenburn-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
