@@ -121,6 +121,10 @@ If the new path's directories does not exist, create them."
 	scroll-conservatively 101
 	scroll-preserve-screen-position t
 	)
+  ;; spell checker
+  (cond ((executable-find "aspell")
+       (setq ispell-program-name "aspell"
+             ispell-really-aspell t)))
 
   ;; auto-matching parens
   (electric-pair-mode t)
