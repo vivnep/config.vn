@@ -2,3 +2,4 @@
 DOT_ZSH="$HOME/.zsh"
 ZFUNCDIR="$DOT_ZSH/functions"
 EDITOR=nvim # might change to emacsclient
+XDG_CONFIG_HOME="$HOME/.config"
