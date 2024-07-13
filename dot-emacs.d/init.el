@@ -1,3 +1,9 @@
+;; fix org-modern fonts
+;; org modern window settings
+;; adjust org settings
+;; denote
+;; fix helpful switch buffer func
+
 (use-package emacs
   :init
 ;;; defuns
