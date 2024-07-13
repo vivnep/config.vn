@@ -82,8 +82,8 @@ Jumps to an Org src block from tangled code."
       (message "Cannot jump to tangled file because point is not at org src block.")))
 
   (defun renz/list-files-with-absolute-path (directory)
-  "Return a list of org files in DIRECTORY with their absolute paths."
-  (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
+    "Return a list of org files in DIRECTORY with their absolute paths."
+    (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
 
   ;; store common buffers to registers
   (set-register ?S '(buffer . "*scratch*"))
@@ -206,8 +206,8 @@ If the new path's directories does not exist, create them."
 
   ;; spell checker
   (cond ((executable-find "aspell")
-       (setq ispell-program-name "aspell"
-             ispell-really-aspell t)))
+         (setq ispell-program-name "aspell"
+               ispell-really-aspell t)))
 
   ;; delete selection on yank
   (delete-selection-mode t)
@@ -301,8 +301,8 @@ If the new path's directories does not exist, create them."
 
 (use-package eglot
   ;; Configure hooks to automatically turn-on eglot for selected modes
-  ; :hook
-  ; (((python-mode ruby-mode elixir-mode) . eglot))
+                                        ; :hook
+                                        ; (((python-mode ruby-mode elixir-mode) . eglot))
 
   :custom
   (eglot-send-changes-idle-time 0.1)
@@ -311,8 +311,8 @@ If the new path's directories does not exist, create them."
   :config
   (fset #'jsonrpc--log-event #'ignore)  ; massive perf boost---don't log every event
   ;; Sometimes you need to tell Eglot where to find the language server
-  ; (add-to-list 'eglot-server-programs
-  ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
+                                        ; (add-to-list 'eglot-server-programs
+                                        ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
   )
 
 ;; automatically use treesitter
@@ -688,7 +688,7 @@ If the new path's directories does not exist, create them."
   ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
   ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
-    ;; Add the option to run embark when using avy
+  ;; Add the option to run embark when using avy
   (defun bedrock/avy-action-embark (pt)
     (unwind-protect
         (save-excursion
@@ -849,8 +849,8 @@ If the new path's directories does not exist, create them."
 ;; diagnostics jumping binds
 (use-package flymake
   :bind (:map flymake-mode-map
-         ("C-c n" . flymake-goto-next-error)
-         ("C-c p" . flymake-goto-prev-error)))
+              ("C-c n" . flymake-goto-next-error)
+              ("C-c p" . flymake-goto-prev-error)))
 
 ;;; 'workspaces' in this config rely on a combination of tab-bar-mode, project.el and
 ;;; burly, with consult making nice switching interfaces for everything
