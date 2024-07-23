@@ -1180,8 +1180,7 @@ Jumps to an Org src block from tangled code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(org-modern scf-mode which-key wgrep vundo vertico verilog-mode use-package treesit-auto tramp tempel-collection tabspaces solarized-theme soap-client org orderless nov modus-themes meow marginalia magit idlwave helpful gruvbox-theme faceup erc embark-consult eglot eat dashboard corfu-terminal circadian cape burly avy anti-zenburn-theme)))
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
