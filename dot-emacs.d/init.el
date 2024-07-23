@@ -405,7 +405,11 @@ Jumps to an Org src block from tangled code."
     "Return a list of org files in DIRECTORY with their absolute paths."
     (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
   (setq org-directory "~/Documents/org/")
+  ;; Refile configuration
   (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-tag-alist '(
                         ;; locale
                         (:startgroup)
@@ -433,9 +437,6 @@ Jumps to an Org src block from tangled code."
 
   ;; Make exporting quotes better
   (setq org-export-with-smart-quotes t)
-  ;; Refile configuration
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-use-outline-path 'file)
   (setq org-capture-templates
         '(("c" "Default Capture" entry (file "inbox.org")
            "* TODO %?\n%U\n%i")
