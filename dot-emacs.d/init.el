@@ -64,33 +64,6 @@
             (select-window first-win)
             (if this-win-2nd (other-window 1))))))
 
-  (defun renz/org-babel-tangle-jump-to-src ()
-    "The opposite of `org-babel-tangle-jump-to-org'.
-Jumps to an Org src block from tangled code."
-    (interactive)
-    (if (org-in-block-p)
-        (let* ((header (car (org-babel-tangle-single-block 1 'only-this-block)))
-               (tangle (car header))
-               (lang (caadr header))
-               (buffer (nth 2 (cadr header)))
-               (org-id (nth 3 (cadr header)))
-               (source-name (nth 4 (cadr header)))
-               (search-comment (org-fill-template
-                                org-babel-tangle-comment-format-beg
-                                `(("link" . ,org-id) ("source-name" . ,source-name))))
-               (file (expand-file-name
-                      (org-babel-effective-tangled-filename buffer lang tangle))))
-          (if (not (file-exists-p file))
-              (message "File does not exist. 'org-babel-tangle' first to create file.")
-            (find-file file)
-            (beginning-of-buffer)
-            (search-forward search-comment)))
-      (message "Cannot jump to tangled file because point is not at org src block.")))
-
-  (defun renz/list-files-with-absolute-path (directory)
-    "Return a list of org files in DIRECTORY with their absolute paths."
-    (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
-
   ;; store common buffers to registers
   (set-register ?S '(buffer . "*scratch*"))
   (set-register ?I `(file . ,(expand-file-name "init.el" user-emacs-directory)))
@@ -271,6 +244,8 @@ If the new path's directories does not exist, create them."
                       :height 110
                       :weight 'normal
                       :width 'normal)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
+
 ;;; theme
   (use-package modus-themes)
   (defvar vn-light-theme 'modus-operandi
@@ -362,8 +337,8 @@ If the new path's directories does not exist, create them."
 
 ;; org mode
 (use-package org
-  :hook
-  ((org-mode . flyspell-mode))
+  ;; :hook
+  ;; ((org-mode . flyspell-mode))
   :bind (:map global-map
               ("C-c l s" . org-store-link)          ; Mnemonic: link → store
               ("C-c l i" . org-insert-link-global)
@@ -372,22 +347,76 @@ If the new path's directories does not exist, create them."
               ("C-c o b o" . org-babel-tangle-jump-to-org)
               ("C-c o b s" . renz/org-babel-tangle-jump-to-src)
               ("C-c o k" . org-babel-remove-result)
+              ("C-c t" . create-heading-with-timestamp)
               ) ; Mnemonic: link → insert
 
+  ;; :custom
+  ;;  (org-block ((t (:inherit fixed-pitch))))
+  ;;  (org-code ((t (:inherit (shadow fixed-pitch)))))
+  ;;  (org-document-info ((t (:foreground "dark orange"))))
+  ;;  (org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+  ;;  (org-indent ((t (:inherit (org-hide fixed-pitch)))))
+  ;;  (org-link ((t (:foreground "royal blue" :underline t))))
+  ;;  (org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;;  (org-property-value ((t (:inherit fixed-pitch))) t)
+  ;;  (org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;;  (org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+  ;;  (org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+  ;;  (org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+
   :config
+(defun create-heading-with-timestamp ()
+  "Create a new heading with an inactive timestamp (including current time) as the title and position cursor below, respecting current heading level."
+  (interactive)
+  (let* ((current-level (org-current-level))
+         (stars (if current-level
+                    (make-string current-level ?*)
+                  "*")))
+    (org-end-of-subtree t t)
+    (unless (bolp) (insert "\n"))
+    (insert stars " ")
+    (org-insert-time-stamp (current-time) t t)
+    (insert "\n")
+    (setq pos (point))
+    (unless (eobp)
+      (insert "\n")
+      (backward-char))
+    (goto-char pos)))
+  (setq org-fold-core-style 'overlays)  ; fix folding <-> isearch
+  (defun renz/org-babel-tangle-jump-to-src ()
+    "The opposite of `org-babel-tangle-jump-to-org'.
+Jumps to an Org src block from tangled code."
+    (interactive)
+    (if (org-in-block-p)
+        (let* ((header (car (org-babel-tangle-single-block 1 'only-this-block)))
+               (tangle (car header))
+               (lang (caadr header))
+               (buffer (nth 2 (cadr header)))
+               (org-id (nth 3 (cadr header)))
+               (source-name (nth 4 (cadr header)))
+               (search-comment (org-fill-template
+                                org-babel-tangle-comment-format-beg
+                                `(("link" . ,org-id) ("source-name" . ,source-name))))
+               (file (expand-file-name
+                      (org-babel-effective-tangled-filename buffer lang tangle))))
+          (if (not (file-exists-p file))
+              (message "File does not exist. 'org-babel-tangle' first to create file.")
+            (find-file file)
+            (beginning-of-buffer)
+            (search-forward search-comment)))
+      (message "Cannot jump to tangled file because point is not at org src block.")))
+
+  (defun renz/list-files-with-absolute-path (directory)
+    "Return a list of org files in DIRECTORY with their absolute paths."
+    (cl-remove-if-not #'file-regular-p (directory-files directory t ".*\.org$")))
   (setq org-directory "~/Documents/org/")
-  ;; (setq org-agenda-files '("inbox.org" "work.org"))
-  (setq org-agenda-files (renz/list-files-with-absolute-path org-directory))
-  ;; allow image resizing
-  (setq org-image-actual-width nil)
-  (setq org-refile-targets 'FIXME)
-  ;; Default tags
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
   (setq org-tag-alist '(
                         ;; locale
                         (:startgroup)
                         ("home" . ?h)
                         ("work" . ?w)
-                        ("school" . ?s)
+                        ("study" . ?s)
                         (:endgroup)
                         (:newline)
                         ;; scale
@@ -400,6 +429,8 @@ If the new path's directories does not exist, create them."
                         ("meta")
                         ("review")
                         ("reading")))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAITING(w@/!)" "STARTED(s!)" "|" "DONE(d!)" "OBSOLETE(o@)")))
   (add-to-list 'org-export-backends 'md)
 
   ;; Make org-open-at-point follow file links in the same window
@@ -407,10 +438,6 @@ If the new path's directories does not exist, create them."
 
   ;; Make exporting quotes better
   (setq org-export-with-smart-quotes t)
-  ;; Instead of just two states (TODO, DONE) we set up a few different states
-  ;; that a task can be in.
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "WAITING(w@/!)" "STARTED(s!)" "|" "DONE(d!)" "OBSOLETE(o@)")))
   ;; Refile configuration
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path 'file)
@@ -434,6 +461,10 @@ If the new path's directories does not exist, create them."
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
 
+   org-image-actual-width '(300)
+   org-startup-with-inline-images t
+   org-image-actual-width nil   ; allow image resizing
+
    ;; Org styling, hide markup etc.
    org-hide-emphasis-markers t
    org-pretty-entities t
@@ -451,17 +482,83 @@ If the new path's directories does not exist, create them."
   ;; Ellipsis styling
   (setq org-ellipsis "…")
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
-
+  (setq org-startup-indented t)
 
   (setq org-agenda-custom-commands
         '(("n" "Agenda and All Todos"
            ((agenda)
             (todo)))
           ("w" "Work" agenda ""
-           ((org-agenda-files '("work.org")))))))
+           ((org-agenda-files '("work.org"))))))
+
+  ;; proportional headline size
+  ;;   (let* ((variable-tuple
+  ;;         (cond ((x-list-fonts "ETBembo")         '(:font "ETBembo"))
+  ;;               ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+  ;;               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+  ;;               ((x-list-fonts "Verdana")         '(:font "Verdana"))
+  ;;               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+  ;;               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+  ;;        (base-font-color     (face-foreground 'default nil 'default))
+  ;;        (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+  ;;   (custom-theme-set-faces
+  ;;    'user
+  ;;    `(org-level-8 ((t (,@headline ,@variable-tuple))))
+  ;;    `(org-level-7 ((t (,@headline ,@variable-tuple))))
+  ;;    `(org-level-6 ((t (,@headline ,@variable-tuple))))
+  ;;    `(org-level-5 ((t (,@headline ,@variable-tuple))))
+  ;;    `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+  ;;    `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+  ;;    `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+  ;;    `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+  ;;    `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+
+  )
+;; makes markdown elements appear when editing them
+(use-package org-appear
+  :hook
+  (org-mode . org-appear-mode))
 (use-package org-modern
+  ;; :custom
+  ;; (org-modern-keyword nil)
+  ;; (org-modern-checkbox nil)
+  ;; (org-modern-table nil))
   :config
+  (set-face-attribute 'org-modern-symbol nil :family "Iosevka")
   (global-org-modern-mode))
+(use-package olivetti
+  :config
+  ;; Distraction-free writing
+  (defun ews-distraction-free ()
+    "Distraction-free writing environment using Olivetti package."
+    (interactive)
+    (if (equal olivetti-mode nil)
+        (progn
+          (window-configuration-to-register 1)
+          (delete-other-windows)
+          (text-scale-set 2)
+          (olivetti-mode t))
+      (progn
+        (if (eq (length (window-list)) 1)
+            (jump-to-register 1))
+        (olivetti-mode 0)
+        (text-scale-set 0))))
+  (setq olivetti-style 'fancy)
+  (setq olivetti-body-width 97)
+  :bind
+  (("<f9>" . ews-distraction-free))
+  )
+(use-package org-alert
+  :config
+    (setq org-alert-interval 300
+	  org-alert-notification-title "Reminder"
+          org-alert-notify-after-event-cutoff 5)
+    (setq alert-default-style 'osx-notifier)
+    (setq org-alert-time-match-string
+      "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\)\\(?:-[0-9]\\{2\\}:[0-9]\\{2\\}\\)?.*?>")
+  (org-alert-enable)
+  )
+(use-package org-timeblock)
 
 ;; nice git porcelain
 (use-package magit
