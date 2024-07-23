@@ -365,23 +365,23 @@ If the new path's directories does not exist, create them."
   ;;  (org-verbatim ((t (:inherit (shadow fixed-pitch)))))
 
   :config
-(defun create-heading-with-timestamp ()
-  "Create a new heading with an inactive timestamp (including current time) as the title and position cursor below, respecting current heading level."
-  (interactive)
-  (let* ((current-level (org-current-level))
-         (stars (if current-level
-                    (make-string current-level ?*)
-                  "*")))
-    (org-end-of-subtree t t)
-    (unless (bolp) (insert "\n"))
-    (insert stars " ")
-    (org-insert-time-stamp (current-time) t t)
-    (insert "\n")
-    (setq pos (point))
-    (unless (eobp)
+  (defun create-heading-with-timestamp ()
+    "Create a new heading with an inactive timestamp (including current time) as the title and position cursor below, respecting current heading level."
+    (interactive)
+    (let* ((current-level (org-current-level))
+           (stars (if current-level
+                      (make-string current-level ?*)
+                    "*")))
+      (org-end-of-subtree t t)
+      (unless (bolp) (insert "\n"))
+      (insert stars " ")
+      (org-insert-time-stamp (current-time) t t)
       (insert "\n")
-      (backward-char))
-    (goto-char pos)))
+      (setq pos (point))
+      (unless (eobp)
+        (insert "\n")
+        (backward-char))
+      (goto-char pos)))
   (setq org-fold-core-style 'overlays)  ; fix folding <-> isearch
   (defun renz/org-babel-tangle-jump-to-src ()
     "The opposite of `org-babel-tangle-jump-to-org'.
@@ -550,12 +550,12 @@ Jumps to an Org src block from tangled code."
   )
 (use-package org-alert
   :config
-    (setq org-alert-interval 300
-	  org-alert-notification-title "Reminder"
-          org-alert-notify-after-event-cutoff 5)
-    (setq alert-default-style 'osx-notifier)
-    (setq org-alert-time-match-string
-      "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\)\\(?:-[0-9]\\{2\\}:[0-9]\\{2\\}\\)?.*?>")
+  (setq org-alert-interval 300
+	org-alert-notification-title "Reminder"
+        org-alert-notify-after-event-cutoff 5)
+  (setq alert-default-style 'osx-notifier)
+  (setq org-alert-time-match-string
+        "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\)\\(?:-[0-9]\\{2\\}:[0-9]\\{2\\}\\)?.*?>")
   (org-alert-enable)
   )
 (use-package org-timeblock)
