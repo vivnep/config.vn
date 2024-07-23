@@ -6,12 +6,7 @@
 
 (use-package emacs
   :init
-;;; defuns
-  (defun init-file ()
-    "Opens the ~/.emacs.d/init.el file."
-    (interactive)
-    (find-file user-init-file))
-
+;;; global defuns
   (defun reload-config ()
     "Reloads init.el"
     (interactive)
