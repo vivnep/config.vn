@@ -121,6 +121,7 @@ Ignores `ARGS'."
 
   ;; track recently opened files
   (recentf-mode t)
+  (add-hook 'find-file-hook 'recentf-save-list)
 
   ;; no bell
   (setq ring-bell-function 'ignore)
