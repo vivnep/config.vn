@@ -597,6 +597,7 @@ If the new path's directories does not exist, create them."
   (setq dashboard-center-content t)
   (setq dashboard-items '((projects  . 5)
                           (agenda    . 5)
+                          (recents   . 5)
                           ))
   (setq dashboard-footer-messages (get-multiple-fortunes 7))
   (dashboard-setup-startup-hook))
