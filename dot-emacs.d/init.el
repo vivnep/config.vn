@@ -289,6 +289,9 @@ If the new path's directories does not exist, create them."
   (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t)
   )
 
+;; pretty eldoc, md editing
+(use-package markdown-mode)
+
 (use-package eglot
   ;; Configure hooks to automatically turn-on eglot for selected modes
                                         ; :hook
