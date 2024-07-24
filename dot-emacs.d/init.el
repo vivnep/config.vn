@@ -1192,7 +1192,9 @@ Resize the Helpful window and keep focus in the original window."
    '("z" . meow-pop-selection)
    '("'" . repeat)
    '("<escape>" . ignore))
-  (meow-global-mode 1))
+  (meow-global-mode 1)
+  (meow-setup-indicator) ;; adds mode-line indicator
+  )
 
 ;; use ripgrep instead of grep
 (use-package grep
