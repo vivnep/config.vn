@@ -1,8 +1,17 @@
+;;; init.el --- VN -*- lexical-binding: t; -*-
+
 ;; fix org-modern fonts
-;; org modern window settings
-;; adjust org settings
-;; denote
-;; fix helpful switch buffer func
+;; denote https://protesilaos.com/emacs/denote
+;; eldoc box? eldoc eager https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc https://github.com/casouri/eldoc-box
+;; nicer calc https://github.com/sulami/literate-calc-mode.el http://yummymelon.com/devnull/announcing-casual-an-opinionated-porcelain-for-emacs-calc.html
+;; personalize keybinds
+;; debugger https://github.com/realgud
+;; dired https://github.com/alexluigit/dirvish https://github.com/Fuco1/dired-hacks http://yummymelon.com/devnull/announcing-casual-dired---an-opinionated-porcelain-for-the-emacs-file-manager.html
+;; color-moccur
+;; update org to 9.7? https://github.com/minad/org-modern/discussions/195
+;; dabbrev? hippie? https://www.masteringemacs.org/article/text-expansion-hippie-expand
+;; customize eat https://emacsconf.org/2023/talks/eat/
+;; replace org-timeblock https://github.com/dmitrym0/org-hyperscheduler/ https://github.com/alphapapa/org-super-agenda
 
 (use-package emacs
   :init
