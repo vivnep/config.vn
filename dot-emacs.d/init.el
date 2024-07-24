@@ -67,6 +67,7 @@
             (set-window-buffer (next-window) next-win-buffer)
             (select-window first-win)
             (if this-win-2nd (other-window 1))))))
+  ;; TODO? change to use (alist buffer) so it can be used w/ other modes like magit
   (defun set-buffer-width (buffer-or-name)
     "Resize the window displaying BUFFER-OR-NAME to about 1/3 of the frame width."
     (let* ((buffer (get-buffer buffer-or-name))
