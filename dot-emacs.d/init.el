@@ -218,6 +218,9 @@ If the new path's directories does not exist, create them."
   ;; save place in files
   (save-place-mode t)
 
+  ;; set window title
+  (setq frame-title-format "%b - emacs")
+
   ;; view follows output until first error
   (setq compilation-scroll-output 'first-error)
 
