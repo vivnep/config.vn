@@ -278,7 +278,10 @@ If the new path's directories does not exist, create them."
         (circadian-setup))
       )
     )
-
+  ;; Completely hide visual-line-mode and change auto-fill-mode to " AF".
+  :delight
+  (auto-fill-function " AF")
+  (visual-line-mode)
   )
 
 ;;; packages
@@ -307,6 +310,9 @@ If the new path's directories does not exist, create them."
                                         ; (add-to-list 'eglot-server-programs
                                         ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
   )
+
+;; hide common minor modes
+(use-package delight)
 
 ;; automatically use treesitter
 (use-package treesit-auto
@@ -891,7 +897,8 @@ Resize the Helpful window and keep focus in the original window."
 ;; which-key: shows a popup of available keybindings when typing a long key seq
 (use-package which-key
   :config
-  (which-key-mode))
+  (which-key-mode)
+  :delight)
 
 ;; orderless style completion
 (use-package orderless
