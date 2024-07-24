@@ -1,6 +1,6 @@
 ;;; init.el --- VN -*- lexical-binding: t; -*-
 
-;; fix org-modern fonts
+;; fix org-modern fonts (track iosevka aile etc)
 ;; denote https://protesilaos.com/emacs/denote
 ;; eldoc box? eldoc eager https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc https://github.com/casouri/eldoc-box
 ;; nicer calc https://github.com/sulami/literate-calc-mode.el http://yummymelon.com/devnull/announcing-casual-an-opinionated-porcelain-for-emacs-calc.html
@@ -217,9 +217,6 @@ If the new path's directories does not exist, create them."
   ;; delete trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  ;; auto-matching parens
-  (electric-pair-mode t)
-
   ;; don't use tab characters for indents
   (setq-default indent-tabs-mode nil)
 
@@ -291,8 +288,7 @@ If the new path's directories does not exist, create them."
   ;; Completely hide visual-line-mode and change auto-fill-mode to " AF".
   :delight
   (auto-fill-function " AF")
-  (visual-line-mode)
-  )
+  (visual-line-mode))
 
 ;;; packages
 ;; melpa and nongnu
@@ -1122,6 +1118,14 @@ Resize the Helpful window and keep focus in the original window."
   :config
   (burly-tabs-mode))
 
+;; nicer parens editing
+(use-package smartparens
+  :ensure smartparens  ;; install the package
+  :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config))
+
 ;; meow modal editing
 (use-package meow
   :config
@@ -1210,6 +1214,26 @@ Resize the Helpful window and keep focus in the original window."
    '("'" . repeat)
    '("<escape>" . ignore))
   (meow-global-mode 1)
+  (setq meow-paren-keymap (make-keymap))
+  (meow-define-state paren
+    "meow state for interacting with smartparens"
+    :lighter " [P]"
+    :keymap meow-paren-keymap)
+
+  ;; meow-define-state creates the variable
+  (setq meow-cursor-type-paren 'hollow)
+
+  (meow-define-keys 'paren
+    '("<escape>" . meow-normal-mode)
+    '("l" . sp-forward-sexp)
+    '("h" . sp-backward-sexp)
+    '("j" . sp-down-sexp)
+    '("k" . sp-up-sexp)
+    '("n" . sp-forward-slurp-sexp)
+    '("b" . sp-forward-barf-sexp)
+    '("v" . sp-backward-barf-sexp)
+    '("C" . sp-backward-slurp-sexp)
+    '("u" . meow-undo))
   (meow-setup-indicator) ;; adds mode-line indicator
   )
 
