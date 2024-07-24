@@ -58,6 +58,15 @@
             (set-window-buffer (next-window) next-win-buffer)
             (select-window first-win)
             (if this-win-2nd (other-window 1))))))
+  (defun set-buffer-width (buffer-or-name)
+    "Resize the window displaying BUFFER-OR-NAME to about 1/3 of the frame width."
+    (let* ((buffer (get-buffer buffer-or-name))
+           (window (get-buffer-window buffer)))
+      (when window
+        (with-selected-window window
+          (let ((target-width (/ (frame-width) 3)))
+            (when (> (window-width) target-width)
+              (shrink-window-horizontally (- (window-width) target-width))))))))
 
   ;; store common buffers to registers
   (set-register ?S '(buffer . "*scratch*"))
@@ -833,13 +842,38 @@ Jumps to an Org src block from tangled code."
 ;; )
 
 ;; better help buffer (but the way it handles history and window placement is worse)
-;; (use-package helpful
-;;   :ensure t
-;;   :bind
-;;   (("C-h f" . helpful-callable)
-;;    ("C-h v" . helpful-variable)
-;;    ("C-h x" . helpful-command)
-;;    ("C-c C-d" . helpful-at-point)))
+(use-package helpful
+  :ensure t
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h x" . helpful-command)
+   ("C-c C-d" . helpful-at-point))
+  :init
+
+  (defun helpful-switch-to-buffer (buffer-or-name)
+    "Display BUFFER-OR-NAME in a Helpful window.
+Reuse existing Helpful windows if possible, otherwise create a new one.
+Resize the Helpful window and keep focus in the original window."
+    (let* ((helpful-window (get-window-with-predicate
+                            (lambda (window)
+                              (with-current-buffer (window-buffer window)
+                                (eq major-mode 'helpful-mode)))))
+           (buffer (get-buffer buffer-or-name))
+           (orig-window (selected-window)))
+      (if helpful-window
+          ;; If a Helpful window exists, use it
+          (set-window-buffer helpful-window buffer)
+        ;; Otherwise, create a new window
+        (select-window (split-window-right (- (window-width) (/ (frame-width) 3))))
+        (switch-to-buffer buffer))
+      ;; Ensure the Helpful buffer is displayed and sized correctly
+      (set-buffer-width buffer)
+      ;; Return focus to the original window
+      (select-window orig-window)))
+
+  (setq helpful-switch-buffer-function #'helpful-switch-to-buffer)
+  )
 
 ;; eshell
 (use-package eshell
