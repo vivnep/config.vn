@@ -1,10 +1,8 @@
 # basics
+- emacs
+  - meow
+  - vertico
+  - consult
+  - corfu
 - alacritty
 - tmux
-- nvim
-- emacs
-
-# extra tools
-- lazygit
-- slides
-- tldr
