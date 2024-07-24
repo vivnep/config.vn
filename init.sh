@@ -9,7 +9,7 @@ case "$OS" in
 "Darwin")
     brew tap d12frosted/emacs-plus
     brew update
-    brew install stow tmux fzf nvim alacritty zsh zoxide ripgrep git make bash coreutils sioyek difftastic fortune aspell
+    brew install stow tmux fzf alacritty zsh zoxide ripgrep git make bash coreutils sioyek difftastic fortune aspell
     brew install emacs-plus@29 --with-native-comp
     ln -sf /opt/homebrew/opt/emacs-plus@29/Emacs.app /Applications
     if [ -z "$(
@@ -28,7 +28,6 @@ case "$OS" in
         CHECK_INSTALL_CMD="dpkg -s"
         PKG_INFO=(
             ["alacritty"]="sudo add-apt-repository ppa:aslatter/ppa -y && sudo apt-get update && sudo apt-get install -y alacritty"
-            ["nvim"]="neovim"
         )
     else
         echo "Unsupported Linux distribution"
