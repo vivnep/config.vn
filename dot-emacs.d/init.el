@@ -12,6 +12,7 @@
 ;; dabbrev? hippie? https://www.masteringemacs.org/article/text-expansion-hippie-expand
 ;; customize eat https://emacsconf.org/2023/talks/eat/
 ;; replace org-timeblock https://github.com/dmitrym0/org-hyperscheduler/ https://github.com/alphapapa/org-super-agenda
+;; fix meow magit bind conflict (discard)
 
 (use-package emacs
   :init
