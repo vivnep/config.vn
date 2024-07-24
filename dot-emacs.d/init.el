@@ -112,8 +112,6 @@ Ignores `ARGS'."
   ;; Don't hang when visiting files with extremely long lines
   (global-so-long-mode t)
 
-  ;; show buffer size in modeline
-  (size-indication-mode)
 
   ;; vertico helper
   (defun crm-indicator (args)
