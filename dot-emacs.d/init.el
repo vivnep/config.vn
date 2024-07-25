@@ -5,13 +5,13 @@
 ;; eldoc box? eldoc eager https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc https://github.com/casouri/eldoc-box
 ;; nicer calc https://github.com/sulami/literate-calc-mode.el http://yummymelon.com/devnull/announcing-casual-an-opinionated-porcelain-for-emacs-calc.html
 ;; personalize keybinds
-;; debugger https://github.com/realgud
 ;; dired https://github.com/alexluigit/dirvish https://github.com/Fuco1/dired-hacks http://yummymelon.com/devnull/announcing-casual-dired---an-opinionated-porcelain-for-the-emacs-file-manager.html
-;; color-moccur
+;; color-moccur https://youtu.be/zxS3zXwV0PU
 ;; update org to 9.7? https://github.com/minad/org-modern/discussions/195
 ;; customize eat https://emacsconf.org/2023/talks/eat/
 ;; replace org-timeblock https://github.com/dmitrym0/org-hyperscheduler/ https://github.com/alphapapa/org-super-agenda
 ;; fix meow magit bind conflict (discard)
+;; set up dape https://github.com/svaante/dape
 
 (use-package emacs
   :init
@@ -318,6 +318,39 @@ If the new path's directories does not exist, create them."
   ;; Sometimes you need to tell Eglot where to find the language server
                                         ; (add-to-list 'eglot-server-programs
                                         ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
+  )
+
+;; debugger
+(use-package dape
+  :hook
+  ;; Save breakpoints on quit
+  ((kill-emacs . dape-breakpoint-save)
+   ;; Load breakpoints on startup
+   (after-init . dape-breakpoint-load))
+
+  ;; :init
+  ;; To use window configuration like gud (gdb-mi)
+  ;; (setq dape-buffer-window-arrangement 'gud)
+
+  :config
+  ;; Info buffers to the right
+  (setq dape-buffer-window-arrangement 'right)
+
+  ;; Global bindings for setting breakpoints with mouse
+  (dape-breakpoint-global-mode)
+
+  ;; Pulse source line (performance hit)
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+
+  ;; To display info and/or repl buffers on stopped
+  ;; (add-hook 'dape-stopped-hook 'dape-info)
+  ;; (add-hook 'dape-stopped-hook 'dape-repl)
+
+  ;; Kill compile buffer on build success
+  (add-hook 'dape-compile-hook 'kill-buffer)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
   )
 
 ;; hide common minor modes
