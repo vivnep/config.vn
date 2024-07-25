@@ -1083,11 +1083,11 @@ Resize the Helpful window and keep focus in the original window."
 
 ;; nicer parens editing
 (use-package smartparens
-  :ensure smartparens  ;; install the package
-  :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
-  :config
-  ;; load default config
-  (require 'smartparens-config))
+  :delight smartparens-mode
+  :init
+  (require 'smartparens-config)
+  (smartparens-global-mode)
+  )
 
 ;; meow modal editing
 (use-package meow
