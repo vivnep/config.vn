@@ -256,8 +256,8 @@ python_version = \"3.12\"
 
             ;; Install packages from Pipfile
             (shell-command "pipenv install")
-
-            (shell-command "pipenv run python -m override_readline")
+            ;; read more here https://www.danliden.com/notes/20240709-python-readline.html
+            (shell-command "pipenv run python -s -m override_readline")
 
             (message "Python environment set up with Pipenv"))))))
 
@@ -266,7 +266,7 @@ python_version = \"3.12\"
   ;; use ipython for the repl
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "--simple-prompt"))
+          python-shell-interpreter-args "-i --simple-prompt"))
 
   ;; delete trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -358,9 +358,9 @@ python_version = \"3.12\"
 (use-package eglot
   :bind
   ("M-RET" . 'eglot-code-actions)
-  ;; Configure hooks to automatically turn-on eglot for selected modes
-                                        ; :hook
-                                        ; (((python-mode ruby-mode elixir-mode) . eglot))
+  :hook
+  ((python-mode . eglot-ensure)
+    (python-ts-mode . eglot-ensure))
 
   :custom
   (eglot-send-changes-idle-time 0.1)
