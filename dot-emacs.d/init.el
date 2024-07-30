@@ -819,6 +819,17 @@ Jumps to an Org src block from tangled code."
   (setq vertico-count 22) ;; show more candidates
   (setq vertico-cycle t) ;; cycle over at bottom/top
   )
+;; faster file picking
+(use-package vertico-directory
+  :ensure nil
+  :after vertico
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;; rich annotations (e.g. docstrings) in the minibuffer
 (use-package marginalia
