@@ -9,7 +9,7 @@ case "$OS" in
 "Darwin")
     brew tap d12frosted/emacs-plus
     brew update
-    brew install stow tmux fzf alacritty zsh zoxide ripgrep git make bash coreutils sioyek difftastic fortune aspell
+    brew install stow tmux fzf alacritty zsh zoxide ripgrep git make bash coreutils sioyek difftastic fortune aspell direnv pipenv
     brew install emacs-plus@29 --with-native-comp
     ln -sf /opt/homebrew/opt/emacs-plus@29/Emacs.app /Applications
     if [ -z "$(

@@ -216,6 +216,57 @@ If the new path's directories does not exist, create them."
   ;; The local version, C-u C-<SPC> will only pop marks from the current buffer.
   ;; So the C-x C-<SPC> version is much closer to how Vim's jump stack works.
 
+  ;; python mode setup
+  (defun setup-python-pipenv-environment ()
+    "Python environment setup boilerplate for new projects. Sets up native completions and ipython."
+    (when (and (or (eq major-mode 'python-mode)
+                   (eq major-mode 'python-ts-mode))
+               (buffer-file-name))
+      (let* ((project-root (locate-dominating-file default-directory ".git"))
+             (envrc-file (when project-root (expand-file-name ".envrc" project-root)))
+             (pipfile (when project-root (expand-file-name "Pipfile" project-root))))
+        (when project-root
+          (let ((default-directory project-root))
+            ;; Create Pipfile if it doesn't exist
+            (unless (file-exists-p pipfile)
+              (with-temp-file pipfile
+                (insert "[[source]]
+url = \"https://pypi.org/simple\"
+verify_ssl = true
+name = \"pypi\"
+
+[packages]
+
+[dev-packages]
+ipython = \"*\"
+gnureadline = \"*\"
+
+[requires]
+python_version = \"3.12\"
+"))
+              (message "Created Pipfile"))
+
+            (unless (file-exists-p envrc-file)
+              (with-temp-file envrc-file
+                (insert "layout pipenv"))
+              (message "Created .envrc file"))
+
+            (when (fboundp 'envrc-allow)
+              (envrc-allow))
+
+            ;; Install packages from Pipfile
+            (shell-command "pipenv install")
+
+            (shell-command "pipenv run python -m override_readline")
+
+            (message "Python environment set up with Pipenv"))))))
+
+  (add-hook 'python-mode-hook 'setup-python-pipenv-environment)
+  (setq python-ts-mode-hook python-mode-hook)
+  ;; use ipython for the repl
+  (when (executable-find "ipython")
+    (setq python-shell-interpreter "ipython"
+          python-shell-interpreter-args "--simple-prompt"))
 
   ;; delete trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -321,6 +372,10 @@ If the new path's directories does not exist, create them."
                                         ; (add-to-list 'eglot-server-programs
                                         ;              '(haskell-mode . ("haskell-language-server-wrapper" "--lsp")))
   )
+
+;; buffer-local direnv
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 
 ;; debugger
 (use-package dape
