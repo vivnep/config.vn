@@ -799,6 +799,7 @@ Jumps to an Org src block from tangled code."
   :bind
   (:map corfu-map
         ;; ("SPC" . corfu-insert-separator)
+        ("RET" . nil)                   ; don't mess w/ enter
         ("C-n" . corfu-next)
         ("C-p" . corfu-previous))
 
