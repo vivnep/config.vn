@@ -109,10 +109,6 @@ Ignores `ARGS'."
   ;; hyper key on macos
   (setq ns-function-modifier 'hyper)
 
-  ;; track recently opened files
-  (recentf-mode t)
-  (add-hook 'find-file-hook 'recentf-save-list)
-
   ;; no bell
   (setq ring-bell-function 'ignore)
 
