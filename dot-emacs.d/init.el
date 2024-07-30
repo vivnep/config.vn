@@ -303,7 +303,10 @@ If the new path's directories does not exist, create them."
 ;; pretty eldoc, md editing
 (use-package markdown-mode)
 
+;; lsp
 (use-package eglot
+  :bind
+  ("M-RET" . 'eglot-code-actions)
   ;; Configure hooks to automatically turn-on eglot for selected modes
                                         ; :hook
                                         ; (((python-mode ruby-mode elixir-mode) . eglot))
