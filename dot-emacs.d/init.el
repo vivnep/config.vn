@@ -1230,7 +1230,6 @@ Resize the Helpful window and keep focus in the original window."
     '("v" . sp-backward-barf-sexp)
     '("C" . sp-backward-slurp-sexp)
     '("u" . meow-undo))
-  (meow-setup-indicator) ;; adds mode-line indicator
   )
 
 ;; use ripgrep instead of grep
