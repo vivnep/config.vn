@@ -262,7 +262,6 @@ If the new path's directories does not exist, create them."
   (set-face-attribute 'variable-pitch nil :family "Iosevka Aile")
 
 ;;; theme
-  (use-package modus-themes)
   (defvar vn-light-theme 'modus-operandi
     "The light theme to use.")
   (defvar vn-dark-theme 'modus-vivendi
