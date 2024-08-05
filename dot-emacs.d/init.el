@@ -266,7 +266,8 @@ python_version = \"3.12\"
   (setq python-ts-mode-hook python-mode-hook)
   ;; use ipython for the repl
   (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "--simple-prompt")
+        python-shell-interpreter-args "--simple-prompt"
+        python-shell-prompt-detect-failure-warning nil)
 
   ;; delete trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
