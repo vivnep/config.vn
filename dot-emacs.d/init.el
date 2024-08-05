@@ -807,7 +807,6 @@ Jumps to an Org src block from tangled code."
   (setq dashboard-center-content t)
   (setq dashboard-items '((projects  . 5)
                           (agenda    . 5)
-                          (recents   . 5)
                           ))
   (setq dashboard-footer-messages (get-multiple-fortunes 7))
   (dashboard-setup-startup-hook))
