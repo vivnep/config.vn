@@ -10,7 +10,6 @@
 ;; update org to 9.7? https://github.com/minad/org-modern/discussions/195
 ;; customize eat https://emacsconf.org/2023/talks/eat/
 ;; replace org-timeblock https://github.com/dmitrym0/org-hyperscheduler/ https://github.com/alphapapa/org-super-agenda
-;; fix meow magit bind conflict (discard)
 ;; set up dape https://github.com/svaante/dape
 
 (use-package emacs
@@ -1317,6 +1316,33 @@ Resize the Helpful window and keep focus in the original window."
    '("z" . meow-pop-selection)
    '("'" . repeat)
    '("<escape>" . ignore))
+
+  (defun my-modified-meow--save-origin-commands ()
+  "Fixes conflict w/ nativecomp"
+  (map-keymap
+   (lambda (key-code _)
+     (ignore-errors
+       (let* ((key (meow--parse-input-event key-code))
+              (cmd (key-binding (kbd key))))
+         (when (and (commandp cmd)
+                    (not (equal cmd 'undefined)))
+           (let* ((rebind-key (concat meow-motion-remap-prefix key))
+                  (func-name (intern (concat "meow-remapped-" (replace-regexp-in-string " " "-" rebind-key)))))
+             (defalias func-name
+               (lambda ()
+                 (interactive)
+                 (let* ((local (lookup-key (current-local-map) (kbd key)))
+                        (remapped (command-remapping local)))
+                   (call-interactively
+                    (cond
+                     ((commandp remapped) remapped)
+                     ((commandp local) local)
+                     (t cmd))))))
+             (local-set-key (kbd rebind-key) func-name))))))
+   meow-motion-state-keymap))
+
+  (advice-add 'meow--save-origin-commands :override #'my-modified-meow--save-origin-commands)
+
   (meow-global-mode 1)
   (setq meow-paren-keymap (make-keymap))
   (meow-define-state paren
