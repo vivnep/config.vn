@@ -236,6 +236,7 @@ name = \"pypi\"
 [dev-packages]
 ipython = \"*\"
 gnureadline = \"*\"
+debugpy = \"*\"
 
 [requires]
 python_version = \"3.12\"
@@ -260,9 +261,8 @@ python_version = \"3.12\"
   (add-hook 'python-mode-hook 'setup-python-pipenv-environment)
   (setq python-ts-mode-hook python-mode-hook)
   ;; use ipython for the repl
-  (when (executable-find "ipython")
-    (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i --simple-prompt"))
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "--simple-prompt")
 
   ;; delete trailing whitespace on save
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
